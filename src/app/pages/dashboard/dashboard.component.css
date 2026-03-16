@@ -1,0 +1,112 @@
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-container h1 {
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.welcome-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.welcome-section h2 {
+  margin-bottom: 10px;
+}
+
+.welcome-section p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #007bff;
+}
+
+.stat-card h3 {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.stat-value.pending {
+  color: #ffc107;
+}
+
+.stat-value.approved {
+  color: #28a745;
+}
+
+.info-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-section h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.info-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.info-section li {
+  margin-bottom: 10px;
+}
+
+.info-section a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.info-section a:hover {
+  text-decoration: underline;
+}
+
+.info-section p {
+  margin: 8px 0;
+  color: #555;
+}
+

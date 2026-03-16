@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="dashboard.component.css">
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+
+  <div *ngIf="!loading" class="dashboard-content">
+    <div class="welcome-section">
+      <h2>Welcome, {{ userRole }}!</h2>
+      <p>You are logged into the Remote Work Management System.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Total Requests</h3>
+        <div class="stat-value">{{ totalRequests }}</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>Pending Requests</h3>
+        <div class="stat-value pending">{{ pendingRequests }}</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>Approved Requests</h3>
+        <div class="stat-value approved">{{ approvedRequests }}</div>
+      </div>
+
+      <div *ngIf="isAdmin()" class="stat-card">
+        <h3>Total Users</h3>
+        <div class="stat-value">{{ totalUsers }}</div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3>Quick Actions</h3>
+      <ul>
+        <li><a href="/requests">View My Requests</a></li>
+        <li *ngIf="isAdmin() || isRH()"><a href="/users">Manage Users</a></li>
+        <li *ngIf="isAdmin()"><a href="/requests">Review All Requests</a></li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h3>System Information</h3>
+      <p><strong>Your Role:</strong> {{ userRole }}</p>
+      <p><strong>System:</strong> RemoteFlow - Remote Work Management System</p>
+      <p><strong>Version:</strong> 1.0.0</p>
+    </div>
+  </div>
+</div>
+

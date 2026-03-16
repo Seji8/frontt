@@ -1,0 +1,142 @@
+<div class="requests-container">
+  <h1>Remote Work Requests</h1>
+
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+  <div class="actions-bar">
+    <button *ngIf="!showForm" class="btn btn-primary" (click)="openForm()">
+      + New Request
+    </button>
+  </div>
+
+  <div *ngIf="showForm" class="form-container card">
+    <h3>{{ editingId ? 'Edit Request' : 'Create New Request' }}</h3>
+
+    <form [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="motif">Reason/Motive</label>
+        <textarea
+          id="motif"
+          formControlName="motif"
+          placeholder="Enter reason for remote work"
+          [class.is-invalid]="requestForm.get('motif')?.invalid && requestForm.get('motif')?.touched"
+        ></textarea>
+        <div *ngIf="requestForm.get('motif')?.invalid && requestForm.get('motif')?.touched" class="error-message">
+          <span *ngIf="requestForm.get('motif')?.errors?.['required']">Reason is required</span>
+          <span *ngIf="requestForm.get('motif')?.errors?.['minlength']">Reason must be at least 5 characters</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dateDebut">Start Date</label>
+          <input
+            id="dateDebut"
+            type="date"
+            formControlName="dateDebut"
+            [class.is-invalid]="requestForm.get('dateDebut')?.invalid && requestForm.get('dateDebut')?.touched"
+          >
+          <div *ngIf="requestForm.get('dateDebut')?.invalid && requestForm.get('dateDebut')?.touched" class="error-message">
+            <span *ngIf="requestForm.get('dateDebut')?.errors?.['required']">Start date is required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dateFin">End Date</label>
+          <input
+            id="dateFin"
+            type="date"
+            formControlName="dateFin"
+            [class.is-invalid]="requestForm.get('dateFin')?.invalid && requestForm.get('dateFin')?.touched"
+          >
+          <div *ngIf="requestForm.get('dateFin')?.invalid && requestForm.get('dateFin')?.touched" class="error-message">
+            <span *ngIf="requestForm.get('dateFin')?.errors?.['required']">End date is required</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="type">Request Type</label>
+          <select id="type" formControlName="type">
+            <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="fichier">Supporting Document</label>
+          <div class="file-upload-container">
+            <input
+              type="file"
+              id="fichier"
+              (change)="onFileSelected($event)"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+              style="display: none;"
+            >
+            <div class="file-input-wrapper">
+              <button type="button" class="btn-file" onclick="document.getElementById('fichier').click()">
+                Choose File
+              </button>
+              <span class="file-name">{{ fileName || 'No file chosen' }}</span>
+            </div>
+            
+            <div *ngIf="fileName" class="file-info">
+              <span class="selected-file">
+                📎 {{ fileName }}
+                <button type="button" class="btn-remove-file" (click)="removeFile()">✖</button>
+              </span>
+            </div>
+            
+            <small class="file-hint">Accepted formats: PDF, DOC, DOCX, JPG, PNG (Max size: 5MB)</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success" [disabled]="requestForm.invalid">
+          {{ editingId ? 'Update Request' : 'Submit Request' }}
+        </button>
+        <button type="button" class="btn btn-warning" (click)="closeForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="!showForm" class="requests-table-container">
+    <div *ngIf="loading" class="loading">Loading requests...</div>
+
+    <div *ngIf="!loading && requests.length > 0">
+      <table class="requests-table">
+        <thead>
+          <tr>
+            <th>Reason</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let request of requests">
+            <td>{{ request.motif }}</td>
+            <td>{{ request.dateDebut | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ request.dateFin | date: 'dd/MM/yyyy' }}</td>
+            <td><span class="type-badge">{{ request.type }}</span></td>
+            <td><span class="status-badge" [ngClass]="'status-' + request.statut">{{ request.statut }}</span></td>
+            <td>
+              <button *ngIf="request.statut === 'PENDING'" class="btn btn-primary btn-small" (click)="editRequest(request)">Edit</button>
+              <button *ngIf="canApprove(request)" class="btn btn-success btn-small" (click)="approveRequest(request.id!)">Approve</button>
+              <button *ngIf="canApprove(request)" class="btn btn-danger btn-small" (click)="rejectRequest(request.id!)">Reject</button>
+              <button class="btn btn-danger btn-small" (click)="deleteRequest(request.id!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!loading && requests.length === 0" class="empty-state">
+      <p>No requests found. <a href="#" (click)="openForm()">Create one</a></p>
+    </div>
+  </div>
+</div>

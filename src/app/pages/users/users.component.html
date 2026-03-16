@@ -1,0 +1,109 @@
+<div class="users-container">
+  <h1>User Management</h1>
+
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+  <div class="actions-bar">
+    <button *ngIf="!showForm" class="btn btn-primary" (click)="openForm()">
+      + Add New User
+    </button>
+  </div>
+
+  <div *ngIf="showForm" class="form-container card">
+    <h3>{{ editingId ? 'Edit User' : 'Create New User' }}</h3>
+    
+    <div *ngIf="!editingId" class="info-message">
+      <p>Password will be automatically generated and sent to the user's email.</p>
+    </div>
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nom">Full Name</label>
+        <input
+          id="nom"
+          type="text"
+          formControlName="nom"
+          placeholder="Enter full name"
+          [class.is-invalid]="userForm.get('nom')?.invalid && userForm.get('nom')?.touched"
+        >
+        <div *ngIf="userForm.get('nom')?.invalid && userForm.get('nom')?.touched" class="error-message">
+          <span *ngIf="userForm.get('nom')?.errors?.['required']">Name is required</span>
+          <span *ngIf="userForm.get('nom')?.errors?.['minlength']">Name must be at least 2 characters</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Enter email"
+          [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+        >
+        <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="error-message">
+          <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required</span>
+          <span *ngIf="userForm.get('email')?.errors?.['email']">Invalid email format</span>
+        </div>
+      </div>
+
+      <!-- Password field only shown when editing -->
+      <div class="form-group" *ngIf="editingId">
+        <label for="password">New Password (optional)</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Leave blank to keep current password"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" formControlName="role">
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success" [disabled]="userForm.invalid">
+          {{ editingId ? 'Update User' : 'Create User' }}
+        </button>
+        <button type="button" class="btn btn-warning" (click)="closeForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="!showForm" class="users-table-container">
+    <div *ngIf="loading" class="loading">Loading users...</div>
+
+    <div *ngIf="!loading && users.length > 0">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.nom }}</td>
+            <td>{{ user.email }}</td>
+            <td><span class="role-badge">{{ user.role }}</span></td>
+            <td>
+              <button class="btn btn-primary btn-small" (click)="editUser(user)">Edit</button>
+              <button class="btn btn-danger btn-small" (click)="deleteUser(user.id!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="!loading && users.length === 0" class="empty-state">
+      <p>No users found. <a href="#" (click)="openForm()">Create one</a></p>
+    </div>
+  </div>
+</div>
