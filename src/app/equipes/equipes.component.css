@@ -1,0 +1,419 @@
+.equipes-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.equipes-container h1 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 28px;
+}
+
+.actions-bar {
+  margin-bottom: 20px;
+}
+
+/* Alertes */
+.alert {
+  padding: 12px 20px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+  color: #721c24;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+  color: #155724;
+}
+
+/* Boutons */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Formulaire */
+.form-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.form-container h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.form-text {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.form-actions button {
+  flex: 1;
+}
+
+/* Tableau */
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+}
+
+.equipes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.equipes-table th {
+  background-color: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+  color: #495057;
+}
+
+.equipes-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.equipes-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Badges */
+.chef-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chef-badge.no-chef {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 60px 40px;
+  color: #6c757d;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-state p {
+  margin-bottom: 0;
+  font-size: 16px;
+}
+
+.empty-state a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.empty-state a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .equipes-container {
+    padding: 10px;
+  }
+
+  .equipes-container h1 {
+    font-size: 24px;
+  }
+
+  .form-container {
+    padding: 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .equipes-table {
+    font-size: 12px;
+  }
+
+  .equipes-table th,
+  .equipes-table td {
+    padding: 8px;
+  }
+
+  .btn-small {
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  .btn-small:first-child {
+    margin-right: 5px;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-container,
+.table-container {
+  animation: fadeIn 0.3s ease-out;
+}
+/* Dans equipes.component.css */
+
+.team-detail {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.team-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.team-header h2 {
+  margin: 0 0 5px 0;
+  font-size: 24px;
+}
+
+.team-header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.team-members-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.team-members-table th {
+  text-align: left;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  color: #495057;
+  font-weight: 600;
+}
+
+.team-members-table td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.team-members-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.me-badge {
+  display: inline-block;
+  background-color: #3498db;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.role-ADMIN { background-color: #e74c3c; color: white; }
+.role-CHEF_EQUIPE { background-color: #f39c12; color: white; }
+.role-RH { background-color: #9b59b6; color: white; }
+.role-EMPLOYE { background-color: #3498db; color: white; }
+
+.team-stats {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+  text-align: right;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.team-stats strong {
+  color: #2c3e50;
+  font-size: 16px;
+}
+.team-info {
+  margin-bottom: 20px;
+}
+
+.info-card {
+  background: #f8f9fa;
+  padding: 15px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.info-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.info-card p {
+  margin: 5px 0;
+  color: #495057;
+}
+
+.info-card p strong {
+  display: inline-block;
+  width: 120px;
+  color: #2c3e50;
+}
+
+.empty-members {
+  text-align: center;
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 15px 0;
+  color: #7f8c8d;
+}

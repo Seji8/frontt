@@ -2,7 +2,10 @@
   <div class="nav-links" *ngIf="isAuthenticated$ | async">
     <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
     <a routerLink="/requests" routerLinkActive="active">My Requests</a>
-  <a *ngIf="isAdmin()" routerLink="/users" routerLinkActive="active">Users</a>
+    <a *ngIf="isAdmin()" routerLink="/users" routerLinkActive="active">Users</a>
+    <a routerLink="/equipes" routerLinkActive="active" *ngIf="isAdmin()">
+  Équipes</a>
+  <a *ngIf="isChef()" routerLink="/equipes" routerLinkActive="active">My Team</a>
   </div>
   <div class="nav-actions" *ngIf="isAuthenticated$ | async">
     <span class="user-role">{{ userRole }}</span>
