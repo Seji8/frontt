@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RequestService, DemandeTeletravail } from '../../services/request.service';
+import { RequestService, DemandeTeletravail, ValidationResponse } from '../../services/request.service';
 import { AuthService } from '../../auth.service';
 
 @Component({
@@ -19,6 +19,11 @@ export class RequestsComponent implements OnInit {
   showForm = false;
   editingId: number | null = null;
   requestForm: FormGroup;
+
+  // Pour le suivi
+  showSuivi = false;
+  selectedDemande: DemandeTeletravail | null = null;
+  loadingSuivi = false;
 
   selectedFile: File | null = null;
   fileName: string = '';
@@ -44,38 +49,105 @@ export class RequestsComponent implements OnInit {
     this.loadRequests();
   }
 
+  // ==================== CHARGEMENT DES DEMANDES ====================
+
   loadRequests() {
     this.loading = true;
     this.error = '';
 
-    this.requestService.getAllRequests().subscribe({
-      next: (requests) => {
-        this.requests = requests;
-        this.loading = false;
+    console.log('Rôle:', this.authService.getRole());
+    console.log('Admin:', this.isAdmin());
+    console.log('Chef:', this.isChef());
+
+    if (this.isAdmin()) {
+      console.log('Chargement toutes demandes');
+      this.requestService.getAllRequests().subscribe({
+        next: (requests) => {
+          this.requests = requests;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error = 'Failed to load requests';
+          this.loading = false;
+        }
+      });
+    } else if (this.isChef()) {
+      console.log('Chargement demandes équipe');
+      this.requestService.getMyRequests().subscribe({
+        next: (requests) => {
+          this.requests = requests;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error = 'Failed to load team requests';
+          this.loading = false;
+        }
+      });
+    } else {
+      console.log('Chargement mes demandes');
+      this.requestService.getMyRequests().subscribe({
+        next: (requests) => {
+          this.requests = requests;
+          this.loading = false;
+        },
+        error: (err) => {
+          this.error = 'Failed to load my requests';
+          this.loading = false;
+        }
+      });
+    }
+  }
+
+  // ==================== SUIVI ====================
+
+  voirSuivi(id: number) {
+    this.showSuivi = true;
+    this.loadingSuivi = true;
+    this.selectedDemande = null;
+    
+    this.requestService.getDemandeSuivi(id).subscribe({
+      next: (demande) => {
+        this.selectedDemande = demande;
+        this.loadingSuivi = false;
       },
       error: (err) => {
-        this.error = 'Failed to load requests';
-        this.loading = false;
-        console.error(err);
+        this.error = 'Failed to load request details';
+        this.loadingSuivi = false;
       }
     });
   }
 
-  // Nouvelle méthode pour gérer la sélection du fichier
+  closeSuivi() {
+    this.showSuivi = false;
+    this.selectedDemande = null;
+  }
+
+  getValidationByEtape(etape: number): ValidationResponse | undefined {
+    if (!this.selectedDemande?.historiqueValidations) return undefined;
+    return this.selectedDemande.historiqueValidations.find(v => v.etape === etape);
+  }
+
+  getValidationByRole(role: string): ValidationResponse | undefined {
+    if (!this.selectedDemande?.historiqueValidations) return undefined;
+    return this.selectedDemande.historiqueValidations.find(v => v.validateurRole === role);
+  }
+
+  // ==================== GESTION DU FICHIER ====================
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
       this.fileName = file.name;
-      console.log('Fichier sélectionné:', file.name);
     }
   }
 
-  // Nouvelle méthode pour supprimer le fichier
   removeFile() {
     this.selectedFile = null;
     this.fileName = '';
   }
+
+  // ==================== FORMULAIRE ====================
 
   openForm() {
     this.showForm = true;
@@ -95,7 +167,6 @@ export class RequestsComponent implements OnInit {
   editRequest(request: DemandeTeletravail) {
     this.editingId = request.id || null;
     
-    // Formater les dates pour l'affichage (si nécessaire)
     const dateDebut = this.formatDateForDisplay(request.dateDebut);
     const dateFin = this.formatDateForDisplay(request.dateFin);
     
@@ -107,112 +178,75 @@ export class RequestsComponent implements OnInit {
       fichierjustificatif: request.fichierjustificatif
     });
     this.fileName = request.fichierjustificatif || '';
-    this.selectedFile = null; // On ne peut pas récupérer le fichier original
+    this.selectedFile = null;
     this.showForm = true;
   }
 
-  // Formater la date pour le backend (MM/DD/YYYY → YYYY-MM-DDThh:mm:ss)
+  // ==================== FORMATAGE DES DATES ====================
+
   formatDateForBackend(date: string): string {
     if (!date) return '';
-    
-    console.log('Date originale:', date);
-    
-    // Si la date est au format MM/DD/YYYY (venant du input)
     if (date.includes('/')) {
       const parts = date.split('/');
-      // parts[0] = MM, parts[1] = DD, parts[2] = YYYY
       return `${parts[2]}-${parts[0]}-${parts[1]}T00:00:00`;
     }
-    
-    // Si la date est au format YYYY-MM-DD
     if (date.includes('-') && date.length === 10) {
       return `${date}T00:00:00`;
     }
-    
     return date;
   }
 
-  // Formater pour l'affichage (YYYY-MM-DDThh:mm:ss → MM/DD/YYYY)
   formatDateForDisplay(date: string): string {
     if (!date) return '';
-    
-    // Enlever l'heure si présente
-    if (date.includes('T')) {
-      date = date.split('T')[0];
-    }
-    
-    // Convertir YYYY-MM-DD en MM/DD/YYYY
+    if (date.includes('T')) date = date.split('T')[0];
     if (date.includes('-')) {
       const parts = date.split('-');
       return `${parts[1]}/${parts[2]}/${parts[0]}`;
     }
-    
     return date;
   }
 
+  // ==================== SOUMISSION ====================
+
   onSubmit() {
-    if (this.requestForm.invalid) {
-      return;
-    }
+    if (this.requestForm.invalid) return;
 
     this.error = '';
     this.success = '';
     this.loading = true;
 
-    // CRÉER FORMDATA (PAS UN OBJET JSON)
     const formData = new FormData();
-    
-    // Ajouter les champs texte
     formData.append('motif', this.requestForm.get('motif')?.value);
-    
-    // Formater les dates correctement pour le backend
-    const dateDebut = this.formatDateForBackend(this.requestForm.get('dateDebut')?.value);
-    const dateFin = this.formatDateForBackend(this.requestForm.get('dateFin')?.value);
-    
-    console.log('Dates formatées pour backend:', dateDebut, dateFin);
-    
-    formData.append('dateDebut', dateDebut);
-    formData.append('dateFin', dateFin);
+    formData.append('dateDebut', this.formatDateForBackend(this.requestForm.get('dateDebut')?.value));
+    formData.append('dateFin', this.formatDateForBackend(this.requestForm.get('dateFin')?.value));
     formData.append('type', this.requestForm.get('type')?.value);
     
-    // Ajouter le fichier si sélectionné
     if (this.selectedFile) {
-      formData.append('fichier', this.selectedFile, this.selectedFile.name);
-      console.log('Fichier ajouté:', this.selectedFile.name);
+      formData.append('fichier', this.selectedFile);
     }
-
-    // DEBUG : Voir le contenu de FormData
-    console.log('Contenu de FormData:');
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
 
     if (this.editingId) {
       this.requestService.updateRequest(this.editingId, formData).subscribe({
-        next: (response) => {
-          console.log('Succès mise à jour:', response);
+        next: () => {
           this.success = 'Request updated successfully';
           this.closeForm();
           this.loadRequests();
           this.loading = false;
         },
         error: (err) => {
-          console.error('Erreur mise à jour:', err);
           this.error = err.error?.message || 'Failed to update request';
           this.loading = false;
         }
       });
     } else {
       this.requestService.createRequest(formData).subscribe({
-        next: (response) => {
-          console.log('Succès création:', response);
+        next: () => {
           this.success = 'Request created successfully';
           this.closeForm();
           this.loadRequests();
           this.loading = false;
         },
         error: (err) => {
-          console.error('Erreur création:', err);
           this.error = err.error?.message || 'Failed to create request';
           this.loading = false;
         }
@@ -220,31 +254,53 @@ export class RequestsComponent implements OnInit {
     }
   }
 
-  approveRequest(id: number) {
-    this.requestService.approveRequest(id).subscribe({
-      next: () => {
-        this.success = 'Request approved successfully';
-        this.loadRequests();
-      },
-      error: (err) => {
-        this.error = 'Failed to approve request';
-        console.error(err);
-      }
-    });
-  }
+  // ==================== ACTIONS ====================
 
-  rejectRequest(id: number) {
-    this.requestService.rejectRequest(id).subscribe({
-      next: () => {
-        this.success = 'Request rejected successfully';
-        this.loadRequests();
-      },
-      error: (err) => {
-        this.error = 'Failed to reject request';
-        console.error(err);
-      }
-    });
+  approveRequest(id: number) {
+  const request = this.requests.find(r => r.id === id);
+  if (request && request.statut !== 'PENDING') {
+    this.success = `Request is already ${request.statut}`;
+    return;
   }
+  
+  this.requestService.approveRequest(id).subscribe({
+    next: () => {
+      this.success = 'Request approved successfully';
+      this.loadRequests();
+    },
+    error: (err) => {
+      if (err.error?.message === 'Vous avez déjà validé cette demande') {
+        this.loadRequests();
+        this.success = 'Request already processed';
+      } else {
+        this.error = err.error?.message || 'Failed to approve request';
+      }
+    }
+  });
+}
+
+rejectRequest(id: number) {
+  const request = this.requests.find(r => r.id === id);
+  if (request && request.statut !== 'PENDING') {
+    this.success = `Request is already ${request.statut}`;
+    return;
+  }
+  
+  this.requestService.rejectRequest(id).subscribe({
+    next: () => {
+      this.success = 'Request rejected successfully';
+      this.loadRequests();
+    },
+    error: (err) => {
+      if (err.error?.message === 'Vous avez déjà validé cette demande') {
+        this.loadRequests();
+        this.success = 'Request already processed';
+      } else {
+        this.error = err.error?.message || 'Failed to reject request';
+      }
+    }
+  });
+}
 
   deleteRequest(id: number) {
     if (confirm('Are you sure you want to delete this request?')) {
@@ -255,10 +311,42 @@ export class RequestsComponent implements OnInit {
         },
         error: (err) => {
           this.error = 'Failed to delete request';
-          console.error(err);
         }
       });
     }
+  }
+
+  // ==================== UTILITAIRES ====================
+
+  getRoleLabel(role: string | undefined): string {
+    if (!role) return '-';
+    const labels: { [key: string]: string } = {
+      'ADMIN': 'Administrator',
+      'CHEF_EQUIPE': 'Team Leader',
+      'RH': 'HR',
+      'EMPLOYE': 'Employee'
+    };
+    return labels[role] || role;
+  }
+
+  getStatusLabel(statut: string | undefined): string {
+    if (!statut) return '-';
+    const labels: { [key: string]: string } = {
+      'PENDING': 'Pending',
+      'APPROVED': 'Approved',
+      'REJECTED': 'Rejected'
+    };
+    return labels[statut] || statut;
+  }
+
+  getTypeLabel(type: string | undefined): string {
+    if (!type) return '-';
+    const labels: { [key: string]: string } = {
+      'OCCASIONAL': 'Occasional',
+      'REGULAR': 'Regular',
+      'FULL': 'Full Time'
+    };
+    return labels[type] || type;
   }
 
   isAdmin(): boolean {
@@ -273,7 +361,48 @@ export class RequestsComponent implements OnInit {
     return this.authService.isChef();
   }
 
+  isEmployee(): boolean {
+    return this.authService.getRole() === 'EMPLOYE';
+  }
+
   canApprove(request: DemandeTeletravail): boolean {
-    return (this.isRH() || this.isChef() || this.isAdmin()) && request.statut === 'PENDING';
+    return (this.isAdmin() || this.isChef()) && request.statut === 'PENDING';
+  }
+
+  canSeeSuivi(request: DemandeTeletravail): boolean {
+    return this.isAdmin() || this.isChef() || request.utilisateurId === this.getCurrentUserId();
+  }
+
+  getCurrentUserId(): number {
+    const userId = localStorage.getItem('userId');
+    return userId ? parseInt(userId) : 0;
+  }
+
+  getValidationStatusText(etape: number): string {
+    const validation = this.getValidationByEtape(etape);
+    if (!validation) return 'Pending';
+    if (validation.statut === 'APPROVED') return 'Approved';
+    if (validation.statut === 'REJECTED') return 'Rejected';
+    return 'Pending';
+  }
+
+  getValidationIcon(etape: number): string {
+    const validation = this.getValidationByEtape(etape);
+    if (!validation) return '⏳';
+    if (validation.statut === 'APPROVED') return '✓';
+    if (validation.statut === 'REJECTED') return '✗';
+    return '⏳';
+  }
+
+  isLastStep(etape: number): boolean {
+    return etape === 2;
+  }
+
+  getStepClass(etape: number): string {
+    const validation = this.getValidationByEtape(etape);
+    if (!validation) return 'pending';
+    if (validation.statut === 'APPROVED') return 'approved';
+    if (validation.statut === 'REJECTED') return 'rejected';
+    return 'pending';
   }
 }

@@ -11,7 +11,32 @@ export interface DemandeTeletravail {
   type: string;
   statut?: string;
   fichierjustificatif?: string;
-  userId?: number;
+  
+  // Infos utilisateur
+  utilisateurId?: number;
+  utilisateurNom?: string;
+  utilisateurEmail?: string;
+  utilisateurRole?: string;
+  utilisateurEquipe?: string;
+  
+  validateurNom?: string;
+  dateCreation?: string;
+  duree?: number;
+  
+  // Champs pour le suivi
+  etapeValidation?: number;
+  prochainValidateur?: string;
+  historiqueValidations?: ValidationResponse[];
+}
+
+export interface ValidationResponse {
+  id: number;
+  validateurNom: string;
+  validateurRole: string;
+  statut: string;
+  commentaire: string;
+  dateValidation: string;
+  etape: number;
 }
 
 @Injectable({
@@ -29,12 +54,23 @@ export class RequestService {
     const token = this.authService.getToken();
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
-      // Ne PAS mettre Content-Type ici, le navigateur le fera automatiquement avec la boundary
     });
   }
 
   getAllRequests(): Observable<DemandeTeletravail[]> {
     return this.http.get<DemandeTeletravail[]>(this.apiUrl, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getMyRequests(): Observable<DemandeTeletravail[]> {
+    return this.http.get<DemandeTeletravail[]>(`${this.apiUrl}/user`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getDemandeSuivi(id: number): Observable<DemandeTeletravail> {
+    return this.http.get<DemandeTeletravail>(`${this.apiUrl}/${id}/suivi`, {
       headers: this.getHeaders()
     });
   }
