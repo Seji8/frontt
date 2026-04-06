@@ -1,0 +1,164 @@
+/* admin-tasks.component.css */
+.admin-tasks-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  color: #1976d2;
+}
+
+.btn-approve {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.btn-reject {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.task-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: white;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.task-header h4 {
+  margin: 0;
+  color: #333;
+}
+
+.task-date {
+  color: #999;
+  font-size: 12px;
+}
+
+.task-body {
+  margin-bottom: 15px;
+}
+
+.task-body p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.loading, .error, .empty {
+  text-align: center;
+  padding: 40px;
+}
+
+.error {
+  color: red;
+}
+/* admin-tasks.component.css */
+
+/* Conteneur des actions */
+.task-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+/* Style commun pour tous les boutons */
+.task-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Bouton Voir détail */
+.btn-view {
+  background: #2196f3;
+  color: white;
+}
+
+.btn-view:hover {
+  background: #0b7dda;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* Bouton Approuver */
+.btn-approve {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-approve:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Bouton Rejeter */
+.btn-reject {
+  background: #f44336;
+  color: white;
+}
+
+.btn-reject:hover {
+  background: #da190b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+/* Effet de clic */
+.task-actions button:active {
+  transform: translateY(0);
+}
+
+/* Désactivé */
+.task-actions button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Version responsive */
+@media (max-width: 600px) {
+  .task-actions {
+    flex-direction: column;
+  }
+  
+  .task-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}

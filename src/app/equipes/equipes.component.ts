@@ -14,7 +14,6 @@ import { AuthService } from '../auth.service';
 export class EquipesComponent implements OnInit {
   equipes: any[] = [];
   users: any[] = [];
-  loading = true;
   error = '';
   success = '';
   showForm = false;
@@ -50,30 +49,25 @@ export class EquipesComponent implements OnInit {
       this.loadMyTeam();
     } else {
       this.error = 'You do not have permission to view this page.';
-      this.loading = false;
     }
   }
 
   loadEquipes() {
-    this.loading = true;
     this.error = '';
     
     this.userService.getAllEquipes().subscribe({
       next: (equipes) => {
         console.log('Équipes chargées:', equipes);
         this.equipes = equipes;
-        this.loading = false;
       },
       error: (err) => {
         console.error('Erreur chargement équipes:', err);
         this.error = err.error?.message || 'Erreur chargement équipes';
-        this.loading = false;
       }
     });
   }
 
  loadMyTeam() {
-  this.loading = true;
   this.error = '';
   
   this.userService.getMyTeam().subscribe({
@@ -91,7 +85,6 @@ export class EquipesComponent implements OnInit {
       } else {
         this.myTeam = null;
       }
-      this.loading = false;
     },
     error: (err) => {
       console.error('Error loading team:', err);
@@ -103,7 +96,6 @@ export class EquipesComponent implements OnInit {
         this.error = 'Unable to load your team.';
       }
       this.myTeam = null;
-      this.loading = false;
     }
   });
 }

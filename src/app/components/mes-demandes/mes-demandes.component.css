@@ -1,0 +1,399 @@
+/* mes-demandes.component.css */
+.mes-demandes-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.btn-new {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-new:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+/* Carte demande */
+.demande-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.demande-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.demande-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.demande-id {
+  font-weight: bold;
+  color: #1976d2;
+  font-size: 14px;
+}
+
+.demande-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.demande-body {
+  margin-bottom: 16px;
+}
+
+.demande-motif {
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 15px;
+}
+
+.demande-dates {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #666;
+}
+
+.demande-type {
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.demande-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pending {
+  background: #fff3e0;
+  color: #ff9800;
+}
+
+.status-approved {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+
+.status-rejected {
+  background: #ffebee;
+  color: #f44336;
+}
+
+.status-cancelled {
+  background: #f5f5f5;
+  color: #999;
+}
+
+.btn-detail {
+  background: none;
+  border: none;
+  color: #1976d2;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-detail:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.detail-section {
+  margin-bottom: 24px;
+}
+
+.detail-section h4 {
+  margin: 0 0 12px 0;
+  color: #1976d2;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  width: 120px;
+  font-weight: 600;
+  color: #666;
+}
+
+.info-value {
+  flex: 1;
+  color: #333;
+}
+
+/* Résultat */
+.resultat-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.resultat-approved, .resultat-rejected, .resultat-pending {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.resultat-icon {
+  font-size: 48px;
+}
+
+.resultat-message strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.resultat-message p {
+  margin: 4px 0;
+  color: #666;
+}
+
+.commentaire {
+  margin-top: 8px;
+  padding: 8px;
+  background: #fff3e0;
+  border-radius: 6px;
+  color: #e65100;
+}
+
+/* Timeline */
+.validation-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.validation-step {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.step-icon.approved {
+  background: #4caf50;
+  color: white;
+}
+
+.step-icon.rejected {
+  background: #f44336;
+  color: white;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-content p {
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+.step-date {
+  font-size: 11px;
+  color: #999;
+}
+
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
+
+.btn-close {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 60px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 60px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.empty p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .mes-demandes-container {
+    padding: 16px;
+  }
+  
+  .demande-dates {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .info-row {
+    flex-direction: column;
+  }
+  
+  .info-label {
+    width: auto;
+    margin-bottom: 4px;
+  }
+  
+  .resultat-approved, .resultat-rejected, .resultat-pending {
+    flex-direction: column;
+    text-align: center;
+  }
+}

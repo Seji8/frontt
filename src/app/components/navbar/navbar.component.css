@@ -1,77 +1,219 @@
-.navbar-menu {
+/* sidebar.component.css - Version SISA */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+/* Sidebar - Style SISA */
+.sidebar {
+  width: 280px;
+  background: #1976d2;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: 2px 0 20px #1976d2;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+  padding: 24px;
+  min-height: 100vh;
+  width: calc(100% - 280px);
+  background: #f8f8f8;
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  padding: 24px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  padding: 12px 18px;
-  background: #1f2937; /* dark slate */
-  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  background: #1a1a1a;
+  z-index: 10;
 }
 
-.nav-links {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-links a {
-  color: #e5e7eb;
-  text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.3s ease, color 0.15s ease;
-}
-
-.nav-links a:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  color: #fff;
-}
-
-.nav-links a.active {
-  background-color: #0ea5a4; /* teal accent */
-  color: #fff;
-}
-
-.nav-actions {
+.logo {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.logo i {
+  font-size: 28px;
+  color: white;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Navigation */
+.sidebar-nav {
+  flex: 1;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: #ccc;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.nav-item i {
+  width: 24px;
+  font-size: 20px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.nav-item.active {
+  background: #333;
+  color: white;
+  border-left: 3px solid white;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 20px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  background: #1a1a1a;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  margin-bottom: 12px;
+}
+
+.avatar i {
+  font-size: 40px;
+  color: #666;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 600;
+  color: white;
 }
 
 .user-role {
-  color: #cbd5e1;
   font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
+  color: #999;
 }
 
-.btn-logout {
-  padding: 8px 16px;
-  background-color: #ef4444;
-  color: white;
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  color: #ccc;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
-.btn-logout:hover {
-  background-color: #dc2626;
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
-  .navbar-menu {
-    flex-direction: column;
-    gap: 15px;
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    position: fixed;
   }
-
-  .nav-links {
-    width: 100%;
-    flex-direction: column;
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
   }
-
-  .nav-actions {
+  
+  .main-content {
+    margin-left: 0 !important;
     width: 100%;
-    justify-content: space-between;
   }
 }

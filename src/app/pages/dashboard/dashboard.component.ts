@@ -1,146 +1,148 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { AuthService } from '../../auth.service';
-import { UserService, User } from '../../services/user.service';
-import { RequestService } from '../../services/request.service';
+// dashboard.component.ts
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Chart, registerables } from 'chart.js';
+import { Router } from '@angular/router';
+import { AuthService } from '../../auth.service'
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
-  userRole: string | null = null;
-  userName: string | null = null;
-  totalUsers = 0;
+export class DashboardComponent implements OnInit, AfterViewInit {
+  userName = 'Utilisateur';
+  userEmail = '';
+  userRole = '';
+  currentDate = '';
+  notificationsCount = 3;
+  
   totalRequests = 0;
   pendingRequests = 0;
   approvedRequests = 0;
   rejectedRequests = 0;
-  loading = true;
+  pendingValidations = 2;
   
-  // Pour l'équipe
-  teamMembers: User[] = [];
-  loadingTeam = false;
-  teamError = '';
-
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private requestService: RequestService
-  ) {}
-
+  isAdmin = false;
+  isChef = false;
+  
+  recentRequests: any[] = [];
+  
+  constructor(private router: Router,private authService: AuthService) {}
+  
   ngOnInit() {
-    this.userRole = this.authService.getRole();
-    this.userName = localStorage.getItem('nom') || 'Utilisateur';
-    this.loadDashboardData();
-    
-    if (this.isChef()) {
-      this.loadTeamMembers();
-    }
-  }
-
-  loadDashboardData() {
-    this.loading = true;
-
-    if (this.authService.isAdmin()) {
-      this.userService.getAllUsers().subscribe({
-        next: (users) => {
-          this.totalUsers = users.length;
-        },
-        error: (err) => console.error('Error loading users', err)
-      });
-    }
-
-    this.requestService.getAllRequests().subscribe({
-      next: (requests) => {
-        this.totalRequests = requests.length;
-        this.pendingRequests = requests.filter(r => r.statut === 'PENDING').length;
-        this.approvedRequests = requests.filter(r => r.statut === 'APPROVED').length;
-        this.rejectedRequests = requests.filter(r => r.statut === 'REJECTED').length;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error loading requests', err);
-        this.loading = false;
-      }
+    this.currentDate = new Date().toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
+    this.loadUserInfo(); 
+    this.loadStatistics();
+    this.loadRecentRequests();
+    this.checkUserRole();
   }
-
-getRoleLabel(role: string): string {
-  const roleLabels: { [key: string]: string } = {
-    'ADMIN': 'Administrator',
-    'CHEF_EQUIPE': 'Team Leader',
-    'RH': 'HR',
-    'EMPLOYE': 'Employee'
-  };
-  return roleLabels[role] || role;
-}
-
-loadTeamMembers() {
-    console.log('=== loadTeamMembers START ===');
-    console.log('Is Chef?', this.authService.isChef());
-    console.log('Token:', this.authService.getToken()?.substring(0, 50));
+    loadUserInfo() {
+    // Récupérer depuis localStorage
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.userName = user.nom || user.name || user.username || 'Utilisateur';
+        this.userEmail = user.email || '';
+        this.userRole = user.role || '';
+      } catch (e) {
+        console.error('Erreur parsing user:', e);
+      }
+    }
     
-    this.loadingTeam = true;
-    this.teamError = '';
+    // Alternative: utiliser AuthService
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.userName = currentUser.nom || currentUser.name || this.userName;
+      this.userEmail = currentUser.email || this.userEmail;
+      this.userRole = currentUser.role || this.userRole;
+    }
     
-    this.userService.getMyTeam().subscribe({
-      next: (members) => {
-        console.log('✅ SUCCESS - Members received:', members);
-        console.log('Number of members:', members?.length);
-        this.teamMembers = members || [];
-        this.loadingTeam = false;
+    console.log('Utilisateur connecté:', this.userName, this.userEmail);
+  }
+  
+  ngAfterViewInit() {
+    this.initChart();
+  }
+  
+  
+  loadStatistics() {
+    // Simuler le chargement des données
+    this.totalRequests = 42;
+    this.pendingRequests = 8;
+    this.approvedRequests = 30;
+    this.rejectedRequests = 4;
+  }
+  
+  loadRecentRequests() {
+    // Simuler des demandes récentes
+    this.recentRequests = [
+      { id: 1, date: new Date(), type: 'Télétravail complet', status: 'En attente' },
+      { id: 2, date: new Date(Date.now() - 86400000), type: 'Télétravail partiel', status: 'Approuvée' },
+      { id: 3, date: new Date(Date.now() - 172800000), type: 'Télétravail complet', status: 'Approuvée' }
+    ];
+  }
+  
+  checkUserRole() {
+    const role = this.authService.getRole() || localStorage.getItem('user_role');
+    this.isAdmin = role === 'admin' || role === 'ADMIN';
+    this.isChef = role === 'chef' || role === 'CHEF_EQUIPE';
+  }
+  
+  initChart() {
+    const ctx = document.getElementById('requestsChart') as HTMLCanvasElement;
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+        datasets: [{
+          label: 'Demandes',
+          data: [5, 8, 6, 12, 9, 4, 3],
+          borderColor: '#1976d2',
+          backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          tension: 0.4,
+          fill: true
+        }]
       },
-      error: (err) => {
-        console.error('❌ ERROR - Details:', err);
-        console.error('Status:', err.status);
-        console.error('Message:', err.message);
-        console.error('Error body:', err.error);
-        
-        // Afficher l'erreur dans le template
-        if (err.status === 404) {
-            this.teamError = 'You are not assigned to any team.';
-        } else if (err.status === 403) {
-            this.teamError = 'Access denied. You need team leader privileges.';
-        } else if (err.status === 401) {
-            this.teamError = 'Session expired. Please login again.';
-        } else if (err.status === 0) {
-            this.teamError = 'Cannot connect to server. Check if backend is running.';
-        } else {
-            this.teamError = `Error: ${err.message || 'Unknown error'}`;
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
         }
-        
-        this.teamMembers = [];
-        this.loadingTeam = false;
-      },
-      complete: () => {
-        console.log('Request completed');
       }
     });
-}
-
-  getCurrentUserId(): number {
-    const userId = localStorage.getItem('userId');
-    return userId ? parseInt(userId) : 0;
   }
-
-  isAdmin(): boolean {
-    return this.authService.isAdmin();
+  
+  newRequest() {
+    this.router.navigate(['/requests/new']);
   }
-
-  isRH(): boolean {
-    return this.authService.isRH();
+  
+  viewRequests() {
+    this.router.navigate(['/requests']);
   }
-
-  isChef(): boolean {
-    return this.authService.isChef();
+  
+  viewAllRequests() {
+    this.router.navigate(['/requests']);
   }
-
-  isEmployee(): boolean {
-    return !this.isAdmin() && !this.isChef() && !this.isRH();
+  
+  viewRequestDetail(id: number) {
+    this.router.navigate(['/requests', id]);
+  }
+  
+  manageUsers() {
+    this.router.navigate(['/users']);
+  }
+  
+  validateRequests() {
+    this.router.navigate(['/camunda/chef/tasks']);
   }
 }

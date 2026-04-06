@@ -1,0 +1,39 @@
+<!-- admin-tasks.component.html - Version corrigée -->
+<div class="admin-tasks-container">
+  <div class="header">
+    <h2>Validation Admin - Demandes de télétravail</h2>
+  </div>
+
+  <div class="tasks-list">
+    <h3>Tâches à valider ({{ tasks.length }})</h3>
+    
+    <div *ngIf="loading" class="loading">Chargement...</div>
+    
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+    
+    <div *ngIf="!loading && tasks.length === 0" class="empty">
+      <p>Aucune tâche à valider pour le moment.</p>
+    </div>
+    
+    <!-- UNE SEULE BOUCLE pour les tâches -->
+    <div class="task-card" *ngFor="let task of tasks">
+      <div class="task-header">
+        <h4>{{ task.name }}</h4>
+        <span class="task-date">{{ formatDate(task.createTime) }}</span>
+      </div>
+      <div class="task-body">
+        <p><strong>Processus:</strong> {{ task.processInstanceId }}</p>
+        <p><strong>Demande ID:</strong> {{ task.demandeId || 'N/A' }}</p>
+        <p><strong>Motif:</strong> {{ task.motif || 'Non spécifié' }}</p>
+        <p><strong>Assignée à:</strong> {{ task.assignee || 'Non assignée' }}</p>
+      </div>
+      <div class="task-actions">
+        <button class="btn-view" (click)="viewDemandeDetail(task)">👁️ Voir détail</button>
+        <button class="btn-approve" (click)="approveTask(task)">✓ Approuver</button>
+        <button class="btn-reject" (click)="rejectTask(task)">✗ Rejeter</button>
+      </div>
+    </div>
+  </div>
+</div>

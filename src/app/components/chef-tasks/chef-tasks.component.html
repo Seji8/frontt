@@ -1,0 +1,68 @@
+<!-- chef-tasks.component.html -->
+<div class="chef-tasks-container">
+  <div class="header">
+    <h2>Gestion des demandes de télétravail</h2>
+    <button class="btn-primary" (click)="startNewRequest()">+ Nouvelle demande</button>
+  </div>
+
+  <!-- Formulaire de nouvelle demande -->
+  <div class="request-form" *ngIf="showRequestForm">
+    <h3>Nouvelle demande de télétravail</h3>
+    <div class="form-group">
+      <label>Motif *</label>
+      <input type="text" [(ngModel)]="requestMotif" placeholder="Raison de la demande">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date début *</label>
+        <input type="datetime-local" [(ngModel)]="requestDateDebut">
+      </div>
+      <div class="form-group">
+        <label>Date fin *</label>
+        <input type="datetime-local" [(ngModel)]="requestDateFin">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Type</label>
+      <select [(ngModel)]="requestType">
+        <option *ngFor="let t of types" [value]="t.value">{{t.label}}</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" (click)="cancelRequest()">Annuler</button>
+      <button class="btn-primary" (click)="submitRequest()" [disabled]="loading">
+        {{ loading ? 'Création...' : 'Créer' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Liste des tâches -->
+  <div class="tasks-list">
+    <h3>Tâches à valider ({{ tasks.length }})</h3>
+    
+    
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+    
+    <div *ngIf="!loading && tasks.length === 0" class="empty">
+      <p>Aucune tâche à valider pour le moment.</p>
+    </div>
+    
+    <div class="task-card" *ngFor="let task of tasks">
+      <div class="task-header">
+        <h4>{{ task.name }}</h4>
+        <span class="task-date">{{ formatDate(task.createTime) }}</span>
+      </div>
+      <div class="task-body">
+        <p><strong>Processus:</strong> {{ task.processInstanceId }}</p>
+        <p><strong>Assignée à:</strong> {{ task.assignee || 'Non assignée' }}</p>
+        <p><strong>Priorité:</strong> {{ task.priority || 'Normale' }}</p>
+      </div>
+      <div class="task-actions">
+        <button class="btn-approve" (click)="approveTask(task)">✓ Approuver</button>
+        <button class="btn-reject" (click)="rejectTask(task)">✗ Rejeter</button>
+      </div>
+    </div>
+  </div>
+</div>

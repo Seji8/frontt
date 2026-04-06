@@ -4,29 +4,24 @@ import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 
 export interface DemandeTeletravail {
-  id?: number;
+  id: number;
   motif: string;
   dateDebut: string;
   dateFin: string;
   type: string;
-  statut?: string;
+  statut: string;
   fichierjustificatif?: string;
-  
-  // Infos utilisateur
-  utilisateurId?: number;
   utilisateurNom?: string;
   utilisateurEmail?: string;
-  utilisateurRole?: string;
-  utilisateurEquipe?: string;
-  
-  validateurNom?: string;
+  utilisateurId?: number;
   dateCreation?: string;
-  duree?: number;
-  
-  // Champs pour le suivi
-  etapeValidation?: number;
-  prochainValidateur?: string;
+  commentaire?: string;  // ← Optionnel
   historiqueValidations?: ValidationResponse[];
+  duree?: number;                    // ← AJOUTER
+  prochainValidateur?: string;       // ← AJOUTER
+  etapeValidation?: number; 
+   utilisateurRole?: string;      // ← AJOUTER
+  utilisateurEquipe?: string;    // ← AJOUTER
 }
 
 export interface ValidationResponse {
@@ -43,7 +38,7 @@ export interface ValidationResponse {
   providedIn: 'root'
 })
 export class RequestService {
-  private apiUrl = 'http://localhost:8080/api/requests';
+  private apiUrl = 'http://localhost:8080/api';
 
   constructor(
     private http: HttpClient,
@@ -68,12 +63,28 @@ export class RequestService {
       headers: this.getHeaders()
     });
   }
+  // request.service.ts
+uploadJustificatif(demandeId: number, formData: FormData): Observable<any> {
+  const token = this.authService.getToken();
+  return this.http.put(`${this.apiUrl}/demandes/${demandeId}/justificatif`, formData, {
+    headers: new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    })
+  });
+}
 
-  getDemandeSuivi(id: number): Observable<DemandeTeletravail> {
-    return this.http.get<DemandeTeletravail>(`${this.apiUrl}/${id}/suivi`, {
-      headers: this.getHeaders()
-    });
-  }
+
+getDemandeSuivi(demandeId: number): Observable<any> {
+  const token = this.authService.getToken();
+  console.log('📤 getDemandeSuivi appelé avec ID:', demandeId);
+  
+  return this.http.get(`${this.apiUrl}/camunda/demandes/${demandeId}/suivi`, {
+    headers: new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    })
+  });
+}
 
   createRequest(formData: FormData): Observable<DemandeTeletravail> {
     return this.http.post<DemandeTeletravail>(this.apiUrl, formData, {
@@ -104,4 +115,12 @@ export class RequestService {
       headers: this.getHeaders()
     });
   }
+getMyDemandes(): Observable<DemandeTeletravail[]> {
+  const token = this.authService.getToken();
+  return this.http.get<DemandeTeletravail[]>(`${this.apiUrl}/camunda/demandes`, {
+    headers: new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    })
+  });
+}
 }

@@ -1,17 +1,8 @@
+// src/app/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface AuthResponse {
-  token: string;
-  role: string;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -21,32 +12,80 @@ export class AuthService {
   private tokenKey = 'auth_token';
   private roleKey = 'user_role';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+   private currentUserSubject = new BehaviorSubject<any>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('🔧 AuthService initialized');
+    console.log('📦 Token at startup:', this.getToken());
+  }
 
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, {
-      email,
-      password
-    }).pipe(
-      tap(response => {
-        localStorage.setItem(this.tokenKey, response.token);
-        localStorage.setItem(this.roleKey, response.role);
-        this.isAuthenticatedSubject.next(true);
+   private loadUserFromStorage() {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.currentUserSubject.next(user);
+      } catch (e) {
+        console.error('Error loading user from storage:', e);
+      }
+    }
+  }
+
+  // auth.service.ts
+login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, { email, password }).pipe(
+      tap((response: any) => {
+        if (response && response.token) {
+          localStorage.setItem('auth_token', response.token);
+          localStorage.setItem('user_role', response.role);
+          
+          // Stocker les infos utilisateur complètes
+          const user = {
+            id: response.userId,
+            nom: response.nom || response.name,
+            email: response.email,
+            role: response.role,
+            equipeId: response.equipeId
+          };
+          localStorage.setItem('user', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+        }
       })
     );
   }
+getCurrentUserInfo(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/me`);
+}
+  getCurrentUser(): any {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      return JSON.parse(userStr);
+    }
+    return null;
+  }
 
+  getUserName(): string {
+    const user = this.getCurrentUser();
+    return user?.nom || user?.name || 'Utilisateur';
+  }
   logout(): void {
+    console.log('🚪 Logout');
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.roleKey);
     this.isAuthenticatedSubject.next(false);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    const token = localStorage.getItem(this.tokenKey);
+    if (token === 'null' || token === 'undefined') {
+      console.warn('⚠️ Token is "null" string, removing it');
+      localStorage.removeItem(this.tokenKey);
+      return null;
+    }
+    return token;
   }
 
   getRole(): string | null {
@@ -54,7 +93,8 @@ export class AuthService {
   }
 
   hasToken(): boolean {
-    return !!localStorage.getItem(this.tokenKey);
+    const token = this.getToken();
+    return !!token && token !== 'null' && token !== 'undefined';
   }
 
   isAdmin(): boolean {
@@ -69,4 +109,3 @@ export class AuthService {
     return this.getRole() === 'RH';
   }
 }
-

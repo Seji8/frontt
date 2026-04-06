@@ -1,13 +1,86 @@
-<nav class="navbar">
-  <div class="navbar-container">
-    <div class="navbar-brand">
-      <h1>RemoteFlow</h1>
+<!-- app.component.html -->
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside *ngIf="!isLoginPage()" class="sidebar" [class.collapsed]="isSidebarCollapsed" [class.mobile-open]="isMobileOpen">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fas fa-building"></i>
+        <span *ngIf="!isSidebarCollapsed">SIGA RemoteFlow</span>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
-    <app-navbar></app-navbar>
-  </div>
-</nav>
 
-<div class="main-content">
-  <router-outlet></router-outlet>
+    <nav class="sidebar-nav">
+      <!-- Dashboard - Tout le monde -->
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <i class="fas fa-tachometer-alt"></i>
+        <span *ngIf="!isSidebarCollapsed">Dashboard</span>
+      </a>
+      
+      <!-- Requests / My Requests - selon le rôle -->
+      <a *ngIf="!isAdmin()" routerLink="/mes-demandes" routerLinkActive="active" class="nav-item">
+        <i class="fas fa-tasks"></i>
+        <span *ngIf="!isSidebarCollapsed">Mes demandes
+        </span>
+      </a>
+      
+      <!-- Users - ADMIN seulement -->
+      <a *ngIf="isAdmin()" routerLink="/users" routerLinkActive="active" class="nav-item">
+        <i class="fas fa-users"></i>
+        <span *ngIf="!isSidebarCollapsed">Utilisateurs</span>
+      </a>
+      
+      <!-- Teams / My Team - ADMIN et CHEF -->
+      <a *ngIf="isAdmin() || isChef()" routerLink="/equipes" routerLinkActive="active" class="nav-item">
+        <i class="fas fa-building"></i>
+        <span *ngIf="!isSidebarCollapsed">
+          {{ isAdmin() ? 'Équipes' : 'Mon équipe' }}
+        </span>
+      </a>
+      
+  
+      
+      <!-- Tâches Camunda Chef - CHEF seulement -->
+      <a *ngIf="isChef()" routerLink="/chef/tasks" routerLinkActive="active" class="nav-item">
+        <i class="fas fa-clipboard-list"></i>
+        <span *ngIf="!isSidebarCollapsed">demandes à valider</span>
+      </a>
+      
+     
+      
+      <!-- Statistiques - RH seulement -->
+      <a *ngIf="isRH()" routerLink="/statistiques" routerLinkActive="active" class="nav-item">
+        <i class="fas fa-chart-bar"></i>
+        <span *ngIf="!isSidebarCollapsed">Statistiques RH</span>
+      </a>
+      
+      <!-- Tâches Camunda Admin - ADMIN seulement -->
+      <a *ngIf="isAdmin()" routerLink="/admin/tasks" routerLinkActive="active" class="nav-item">
+        <i class="fas fa-tasks"></i>
+        <span *ngIf="!isSidebarCollapsed">demandes à valider</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div *ngIf="!isSidebarCollapsed" class="user-details">
+          <span class="user-name">{{ userRole }}</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span *ngIf="!isSidebarCollapsed">Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" [class.sidebar-collapsed]="isSidebarCollapsed && !isLoginPage()" [class.no-sidebar]="isLoginPage()">
+    <router-outlet></router-outlet>
+  </main>
 </div>
-
