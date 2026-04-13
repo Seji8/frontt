@@ -40,7 +40,7 @@
   padding: 24px;
   min-height: 100vh;
   width: calc(100% - 280px);
-  background: #f8f8f8;
+  background: #ededf1;
 }
 
 .main-content.sidebar-collapsed {

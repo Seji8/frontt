@@ -78,7 +78,11 @@ export class LoginComponent {
                 localStorage.setItem('user', JSON.stringify(userInfo));
                 console.log('✅ Infos utilisateur récupérées:', userInfo.nom);
                 this.loading = false;
-                this.router.navigate(['/dashboard']);
+                
+                // ✅ SOLUTION 1: Forcer le rechargement complet
+                window.location.href = '/dashboard';
+                // OU utiliser cette alternative:
+                // window.location.reload();
               },
               error: (err) => {
                 console.error('Erreur récupération user:', err);
@@ -97,7 +101,9 @@ export class LoginComponent {
                 };
                 localStorage.setItem('user', JSON.stringify(userInfo));
                 this.loading = false;
-                this.router.navigate(['/dashboard']);
+                
+                // ✅ SOLUTION 1: Forcer le rechargement complet
+                window.location.href = '/dashboard';
               }
             });
           } else {
@@ -112,7 +118,9 @@ export class LoginComponent {
             localStorage.setItem('user', JSON.stringify(userInfo));
             console.log('✅ Utilisateur connecté:', userInfo.nom);
             this.loading = false;
-            this.router.navigate(['/dashboard']);
+            
+            // ✅ SOLUTION 1: Forcer le rechargement complet
+            window.location.href = '/dashboard';
           }
         } else {
           this.loading = false;

@@ -45,15 +45,31 @@
 
     <!-- Section justificatif -->
     <div class="detail-section">
-      <h3>Justificatif</h3>
+      <h3>
+        <i class="fas fa-paperclip"></i>
+        Justificatif
+      </h3>
+      
+      <!-- ✅ Afficher le fichier existant -->
       <div *ngIf="demande.fichierjustificatif" class="file-info">
-        <p>📎 Fichier: {{ getFileName(demande.fichierjustificatif) }}</p>
-        <button class="btn-download" (click)="downloadFile(demande.fichierjustificatif)">Télécharger</button>
+        <div class="file-details">
+          <i class="fas fa-file-image"></i>
+          <span class="file-name">{{ getFileName(demande.fichierjustificatif) }}</span>
+        </div>
+        <div class="file-actions">
+          <button class="btn-download" (click)="downloadFile()">
+            <i class="fas fa-download"></i> Télécharger
+          </button>
+        </div>
       </div>
+      
+      <!-- ✅ Afficher l'upload si pas de fichier -->
       <div *ngIf="!demande.fichierjustificatif" class="upload-area">
         <p>Aucun justificatif fourni</p>
         <input type="file" #fileInput (change)="onFileSelected($event)" accept=".pdf,.jpg,.png" style="display:none">
-        <button class="btn-upload" (click)="fileInput.click()">📤 Ajouter un justificatif</button>
+        <button class="btn-upload" (click)="fileInput.click()">
+          <i class="fas fa-upload"></i> Ajouter un justificatif
+        </button>
       </div>
     </div>
 

@@ -1,8 +1,9 @@
 // app.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './auth.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -20,76 +21,86 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private ngZone: NgZone
+  ) {this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      this.currentUrl = event.urlAfterRedirects;
+    });
+  }
 
-  ngOnInit() {
-    // Récupérer le rôle et les infos utilisateur
-    this.userRole = localStorage.getItem('user_role') || 'EMPLOYE';
-    
-    // Récupérer le nom de l'utilisateur
+   ngOnInit() {
+    this.loadUserInfo();
+  }
+
+  loadUserInfo() {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
-        this.userName = user.nom || user.name || 'Utilisateur';
+        this.userName = user.nom || user.name || '';
+        this.userRole = user.role || this.authService.getRole() || '';
       } catch (e) {
-        this.userName = 'Utilisateur';
+        console.error('Erreur:', e);
       }
     }
-    
-    console.log('👤 Rôle utilisateur:', this.userRole);
-    console.log('📝 Nom utilisateur:', this.userName);
-    
-    // Suivre les changements d'URL
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.currentUrl = event.url;
-      }
-    });
   }
 
-  // Vérifier si on est sur la page de login
-  isLoginPage(): boolean {
-    return this.currentUrl === '/login' || this.currentUrl === '/';
+  // ✅ Méthode de navigation - corrige le problème du double clic
+   navigateTo(path: string) {
+    console.log('🔗 Navigation vers:', path);
+    console.log('📍 URL avant:', this.router.url);
+    
+    // Vérifier si on est déjà sur la page
+    if (this.router.url === path) {
+      console.log('🔄 Déjà sur cette page, rechargement des données');
+      // Recharger le composant actuel
+      this.ngZone.run(() => {
+        this.router.navigate([path]).then(() => {
+          window.location.reload();
+        });
+      });
+      return;
+    }
+    // Navigation vers nouvelle page
+    this.ngZone.run(() => {
+      this.router.navigate([path]).then(() => {
+        console.log('✅ Navigation terminée vers:', path);
+      }).catch(err => {
+        console.error('❌ Erreur navigation:', err);
+        // Fallback
+        window.location.href = path;
+      });
+    });
+  }
+  // ✅ Vérifier si un lien est actif
+  isActive(url: string): boolean {
+    return this.currentUrl === url || this.currentUrl?.startsWith(url + '/');
   }
 
   toggleSidebar() {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
-  // Vérifier si l'utilisateur est ADMIN
+  isLoginPage(): boolean {
+    return this.router.url === '/login';
+  }
+
   isAdmin(): boolean {
     return this.userRole === 'ADMIN' || this.userRole === 'admin';
   }
 
-  // Vérifier si l'utilisateur est CHEF_EQUIPE
   isChef(): boolean {
     return this.userRole === 'CHEF_EQUIPE' || this.userRole === 'chef';
   }
 
-  // Vérifier si l'utilisateur est RH
   isRH(): boolean {
     return this.userRole === 'RH' || this.userRole === 'rh';
   }
 
-  // Vérifier si l'utilisateur est EMPLOYE
-  isEmploye(): boolean {
-    return this.userRole === 'EMPLOYE' || this.userRole === 'employe' || 
-           (!this.isAdmin() && !this.isChef() && !this.isRH());
-  }
-
-  getRoleLabel(): string {
-    switch(this.userRole.toUpperCase()) {
-      case 'ADMIN': return 'Administrateur';
-      case 'CHEF_EQUIPE': return 'Chef d\'équipe';
-      case 'RH': return 'Ressources Humaines';
-      default: return 'Employé';
-    }
-  }
-
   logout() {
-    this.authService.logout();
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 }

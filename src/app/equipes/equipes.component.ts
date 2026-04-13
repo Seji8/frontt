@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from './../services/user.service';
@@ -20,7 +20,6 @@ export class EquipesComponent implements OnInit {
   editingId: number | null = null;
   equipeForm: FormGroup;
   
-  // Pour le chef d'équipe
   isAdminUser = false;
   isChefUser = false;
   myTeam: any = null;
@@ -28,7 +27,8 @@ export class EquipesComponent implements OnInit {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef  // ← AJOUTER
   ) {
     this.equipeForm = this.fb.group({
       nom: ['', [Validators.required, Validators.minLength(2)]],
@@ -39,74 +39,83 @@ export class EquipesComponent implements OnInit {
   ngOnInit() {
     this.isAdminUser = this.authService.isAdmin();
     this.isChefUser = this.authService.isChef();
+    this.cdr.detectChanges();
     
     if (this.isAdminUser) {
-      // ADMIN voit toutes les équipes
       this.loadEquipes();
       this.loadUsers();
     } else if (this.isChefUser) {
-      // CHEF voit seulement son équipe
       this.loadMyTeam();
     } else {
       this.error = 'You do not have permission to view this page.';
+      this.cdr.detectChanges();
     }
   }
 
   loadEquipes() {
     this.error = '';
+    this.cdr.detectChanges();
     
     this.userService.getAllEquipes().subscribe({
       next: (equipes) => {
         console.log('Équipes chargées:', equipes);
         this.equipes = equipes;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erreur chargement équipes:', err);
         this.error = err.error?.message || 'Erreur chargement équipes';
+        this.cdr.detectChanges();
       }
     });
   }
 
- loadMyTeam() {
-  this.error = '';
-  
-  this.userService.getMyTeam().subscribe({
-    next: (members) => {
-      console.log('My team loaded:', members);
-      
-      if (members && members.length > 0) {
-        this.myTeam = {
-          id: members[0]?.equipeId,
-          nom: members[0]?.equipeNom || 'My Team',
-          membres: members,
-          chef_id: members.find(m => m.role === 'CHEF_EQUIPE')?.id
-        };
-        console.log('myTeam created:', this.myTeam);
-      } else {
+  loadMyTeam() {
+    this.error = '';
+    this.cdr.detectChanges();
+    
+    this.userService.getMyTeam().subscribe({
+      next: (members) => {
+        console.log('My team loaded:', members);
+        
+        if (members && members.length > 0) {
+          this.myTeam = {
+            id: members[0]?.equipeId,
+            nom: members[0]?.equipeNom || 'My Team',
+            membres: members,
+            chef_id: members.find(m => m.role === 'CHEF_EQUIPE')?.id
+          };
+          console.log('myTeam created:', this.myTeam);
+        } else {
+          this.myTeam = null;
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading team:', err);
+        if (err.status === 404) {
+          this.error = 'You are not assigned to any team.';
+        } else if (err.status === 403) {
+          this.error = 'Access denied. You need team leader privileges.';
+        } else {
+          this.error = 'Unable to load your team.';
+        }
         this.myTeam = null;
+        this.cdr.detectChanges();
       }
-    },
-    error: (err) => {
-      console.error('Error loading team:', err);
-      if (err.status === 404) {
-        this.error = 'You are not assigned to any team.';
-      } else if (err.status === 403) {
-        this.error = 'Access denied. You need team leader privileges.';
-      } else {
-        this.error = 'Unable to load your team.';
-      }
-      this.myTeam = null;
-    }
-  });
-}
+    });
+  }
+
   loadUsers() {
     this.userService.getAllUsers().subscribe({
       next: (users) => {
         this.users = users.filter(user => user.role === 'CHEF_EQUIPE');
         console.log('Chefs potentiels:', this.users);
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erreur chargement utilisateurs:', err);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -114,6 +123,7 @@ export class EquipesComponent implements OnInit {
   openForm() {
     if (!this.isAdminUser) {
       this.error = 'Only administrators can edit teams.';
+      this.cdr.detectChanges();
       return;
     }
     this.showForm = true;
@@ -121,6 +131,7 @@ export class EquipesComponent implements OnInit {
     this.error = '';
     this.success = '';
     this.equipeForm.reset({ nom: '', chefId: '' });
+    this.cdr.detectChanges();
   }
 
   closeForm() {
@@ -129,11 +140,13 @@ export class EquipesComponent implements OnInit {
     this.equipeForm.reset();
     this.error = '';
     this.success = '';
+    this.cdr.detectChanges();
   }
 
   editEquipe(equipe: any) {
     if (!this.isAdminUser) {
       this.error = 'Only administrators can edit teams.';
+      this.cdr.detectChanges();
       return;
     }
     this.editingId = equipe.id;
@@ -144,11 +157,13 @@ export class EquipesComponent implements OnInit {
       chefId: equipe.chef_id || equipe.chefId || ''
     });
     this.showForm = true;
+    this.cdr.detectChanges();
   }
 
   onSubmit() {
     if (!this.isAdminUser) {
       this.error = 'Only administrators can modify teams.';
+      this.cdr.detectChanges();
       return;
     }
     
@@ -156,11 +171,13 @@ export class EquipesComponent implements OnInit {
       Object.keys(this.equipeForm.controls).forEach(key => {
         this.equipeForm.get(key)?.markAsTouched();
       });
+      this.cdr.detectChanges();
       return;
     }
 
     this.error = '';
     this.success = '';
+    this.cdr.detectChanges();
 
     const equipeData = {
       nom: this.equipeForm.get('nom')?.value,
@@ -176,10 +193,12 @@ export class EquipesComponent implements OnInit {
           this.success = 'Team updated successfully';
           this.closeForm();
           this.loadEquipes();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erreur mise à jour:', err);
           this.error = err.error?.message || 'Error updating team';
+          this.cdr.detectChanges();
         }
       });
     } else {
@@ -189,10 +208,12 @@ export class EquipesComponent implements OnInit {
           this.success = 'Team created successfully';
           this.closeForm();
           this.loadEquipes();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erreur création:', err);
           this.error = err.error?.message || 'Error creating team';
+          this.cdr.detectChanges();
         }
       });
     }
@@ -201,19 +222,24 @@ export class EquipesComponent implements OnInit {
   deleteEquipe(id: number) {
     if (!this.isAdminUser) {
       this.error = 'Only administrators can delete teams.';
+      this.cdr.detectChanges();
       return;
     }
     
     if (confirm('Are you sure you want to delete this team?')) {
+      this.cdr.detectChanges();
+      
       this.userService.deleteEquipe(id).subscribe({
         next: () => {
           console.log('Équipe supprimée:', id);
           this.success = 'Team deleted successfully';
           this.loadEquipes();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('Erreur suppression:', err);
           this.error = err.error?.message || 'Error deleting team';
+          this.cdr.detectChanges();
         }
       });
     }

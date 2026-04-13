@@ -8,11 +8,10 @@
         </h1>
         <p class="welcome-subtitle">Voici ce qui se passe avec vos demandes de télétravail aujourd'hui</p>
       </div>
-        <div class="date-badge">
-          <i class="fas fa-calendar-alt"></i>
-          <span>{{ currentDate }}</span>
-        
-          <div class="notification-badge">
+      <div class="date-badge">
+        <i class="fas fa-calendar-alt"></i>
+        <span>{{ currentDate }}</span>
+        <div class="notification-badge">
           <i class="fas fa-bell"></i>
           <span class="notification-count" *ngIf="notificationsCount > 0">{{ notificationsCount }}</span>
         </div>
@@ -88,10 +87,10 @@
           <i class="fas fa-chart-bar"></i>
           Évolution des demandes
         </h3>
-        <select class="chart-select">
-          <option>Cette semaine</option>
-          <option>Ce mois</option>
-          <option>Cette année</option>
+        <select class="chart-select" (change)="onChartPeriodChange($event)">
+          <option value="week">Cette semaine</option>
+          <option value="month">Ce mois</option>
+          <option value="year">Cette année</option>
         </select>
       </div>
       <div class="chart-container">
@@ -148,56 +147,6 @@
     </div>
   </div>
 
-  <!-- Demandes récentes -->
-  <div class="recent-requests-card">
-    <div class="card-header">
-      <h3>
-        <i class="fas fa-history"></i>
-        Demandes récentes
-      </h3>
-      <a class="view-all" (click)="viewAllRequests()">
-        Voir tout <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
-    
-    <!-- dashboard.component.html - Modifiez la partie du tableau -->
-<div class="table-container" *ngIf="recentRequests.length > 0; else noRequests">
-  <table class="requests-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Type</th>
-        <th>Statut</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let request of recentRequests">
-        <td>
-          {{ request.date.getDate() }}/{{ request.date.getMonth() + 1 }}/{{ request.date.getFullYear() }}
-        </td>
-        <td>{{ request.type }}</td>
-        <td>
-          <span class="status-badge" [class]="request.status.toLowerCase().replace(' ', '_')">
-            {{ request.status }}
-          </span>
-        </td>
-        <td>
-          <button class="view-btn" (click)="viewRequestDetail(request.id)">
-            Détails <i class="fas fa-eye"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-    
-    <div *ngIf="recentRequests.length === 0">
-      <div class="empty-state">
-        <i class="fas fa-inbox"></i>
-        <p>Aucune demande récente</p>
-        <button class="btn-primary" (click)="newRequest()">Créer une demande</button>
-      </div>
-    </div>
-  </div>
+
+   
 </div>

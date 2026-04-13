@@ -1,8 +1,9 @@
 // dashboard.component.ts
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service'
+import { RequestService, DemandeTeletravail } from '../../services/request.service'; 
 Chart.register(...registerables);
 
 @Component({
@@ -27,8 +28,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   isChef = false;
   
   recentRequests: any[] = [];
+  private chart: Chart | null = null;
   
-  constructor(private router: Router,private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private requestService: RequestService,
+    private cdr: ChangeDetectorRef
+  ) {}
   
   ngOnInit() {
     this.currentDate = new Date().toLocaleDateString('fr-FR', {
@@ -38,12 +45,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       day: 'numeric'
     });
     this.loadUserInfo(); 
-    this.loadStatistics();
-    this.loadRecentRequests();
+    this.loadAllData();
     this.checkUserRole();
+    this.cdr.detectChanges();
   }
-    loadUserInfo() {
-    // Récupérer depuis localStorage
+  
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
+  }
+  
+  loadUserInfo() {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
@@ -56,7 +67,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
     }
     
-    // Alternative: utiliser AuthService
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       this.userName = currentUser.nom || currentUser.name || this.userName;
@@ -65,47 +75,120 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
     
     console.log('Utilisateur connecté:', this.userName, this.userEmail);
+    this.cdr.detectChanges();
   }
   
-  ngAfterViewInit() {
-    this.initChart();
+  loadAllData() {
+    console.log('🔄 Dashboard - Chargement des données');
+    
+    this.requestService.getMyDemandes().subscribe({
+      next: (demandes: DemandeTeletravail[]) => {
+        console.log('📊 NOMBRE DE DEMANDES:', demandes.length);
+        
+        // 1. Mettre à jour les statistiques
+        this.totalRequests = demandes.length;
+        this.pendingRequests = demandes.filter(d => d.statut === 'PENDING').length;
+        this.approvedRequests = demandes.filter(d => d.statut === 'APPROVED').length;
+        this.rejectedRequests = demandes.filter(d => d.statut === 'REJECTED').length;
+        
+        // 2. Mettre à jour les demandes récentes (les 5 plus récentes)
+        this.recentRequests = demandes
+          .sort((a, b) => {
+            const dateA = new Date(a.dateCreation || new Date());
+            const dateB = new Date(b.dateCreation || new Date());
+            return dateB.getTime() - dateA.getTime();
+          })
+          .slice(0, 5)
+          .map(d => ({
+            id: d.id,
+            date: new Date(d.dateCreation || new Date()),
+            type: this.getTypeLabel(d.type),
+            status: this.getStatusLabel(d.statut),
+            rawStatus: d.statut
+          }));
+        
+        // 3. Initialiser le graphique
+        this.initChartWithData(demandes);
+        
+        // 4. Forcer la mise à jour de l'affichage
+        this.cdr.detectChanges();
+        
+        console.log('📊 Statistiques mises à jour:', {
+          total: this.totalRequests,
+          pending: this.pendingRequests,
+          approved: this.approvedRequests,
+          rejected: this.rejectedRequests,
+          recentCount: this.recentRequests.length
+        });
+      },
+      error: (err) => {
+        console.error('❌ Erreur chargement:', err);
+        this.cdr.detectChanges();
+      }
+    });
   }
   
-  
-  loadStatistics() {
-    // Simuler le chargement des données
-    this.totalRequests = 42;
-    this.pendingRequests = 8;
-    this.approvedRequests = 30;
-    this.rejectedRequests = 4;
+  getTypeLabel(type: string): string {
+    const labels: { [key: string]: string } = {
+      'OCCASIONAL': 'Télétravail occasionnel',
+      'REGULAR': 'Télétravail régulier',
+      'FULL': 'Télétravail complet',
+      'PARTIAL': 'Télétravail partiel'
+    };
+    return labels[type] || type || 'Non spécifié';
   }
   
-  loadRecentRequests() {
-    // Simuler des demandes récentes
-    this.recentRequests = [
-      { id: 1, date: new Date(), type: 'Télétravail complet', status: 'En attente' },
-      { id: 2, date: new Date(Date.now() - 86400000), type: 'Télétravail partiel', status: 'Approuvée' },
-      { id: 3, date: new Date(Date.now() - 172800000), type: 'Télétravail complet', status: 'Approuvée' }
-    ];
+  getStatusLabel(statut: string): string {
+    const labels: { [key: string]: string } = {
+      'PENDING': 'En attente',
+      'APPROVED': 'Approuvée',
+      'REJECTED': 'Refusée',
+      'CANCELLED': 'Annulée'
+    };
+    return labels[statut] || statut || 'Inconnu';
   }
   
-  checkUserRole() {
-    const role = this.authService.getRole() || localStorage.getItem('user_role');
-    this.isAdmin = role === 'admin' || role === 'ADMIN';
-    this.isChef = role === 'chef' || role === 'CHEF_EQUIPE';
-  }
-  
-  initChart() {
+  initChartWithData(demandes: DemandeTeletravail[]) {
     const ctx = document.getElementById('requestsChart') as HTMLCanvasElement;
-    new Chart(ctx, {
+    
+    if (!ctx) {
+      console.error('Canvas requestsChart non trouvé');
+      return;
+    }
+    
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    
+    const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+    const dataParJour = new Array(7).fill(0);
+    
+    demandes.forEach(demande => {
+      if (demande.dateCreation) {
+        const date = new Date(demande.dateCreation);
+        if (!isNaN(date.getTime())) {
+          const jourSemaine = date.getDay();
+          const index = jourSemaine === 0 ? 6 : jourSemaine - 1;
+          dataParJour[index]++;
+        }
+      }
+    });
+    
+    this.chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+        labels: jours,
         datasets: [{
           label: 'Demandes',
-          data: [5, 8, 6, 12, 9, 4, 3],
+          data: dataParJour,
           borderColor: '#1976d2',
           backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          borderWidth: 2,
+          pointBackgroundColor: '#1976d2',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
           tension: 0.4,
           fill: true
         }]
@@ -114,12 +197,43 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                return `${context.raw} demande(s)`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1, precision: 0 },
+            title: { display: true, text: 'Nombre de demandes' }
+          },
+          x: {
+            title: { display: true, text: 'Jours de la semaine' }
           }
         }
       }
     });
+    
+    this.cdr.detectChanges();
+  }
+  
+  onChartPeriodChange(event: any) {
+    const period = event.target.value;
+    console.log('Période sélectionnée:', period);
+    // Recharger les données pour la nouvelle période
+    this.loadAllData();
+  }
+  
+  checkUserRole() {
+    const role = this.authService.getRole() || localStorage.getItem('user_role');
+    this.isAdmin = role === 'admin' || role === 'ADMIN';
+    this.isChef = role === 'chef' || role === 'CHEF_EQUIPE';
+    this.cdr.detectChanges();
   }
   
   newRequest() {
@@ -127,7 +241,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
   
   viewRequests() {
-    this.router.navigate(['/requests']);
+    this.router.navigate(['mes-demandes']);
   }
   
   viewAllRequests() {

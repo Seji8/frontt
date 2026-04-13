@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
 
 export interface DemandeTeletravail {
+  demandeId: any;
   id: number;
   motif: string;
   dateDebut: string;
@@ -15,13 +16,13 @@ export interface DemandeTeletravail {
   utilisateurEmail?: string;
   utilisateurId?: number;
   dateCreation?: string;
-  commentaire?: string;  // ← Optionnel
+  commentaire?: string;
   historiqueValidations?: ValidationResponse[];
-  duree?: number;                    // ← AJOUTER
-  prochainValidateur?: string;       // ← AJOUTER
-  etapeValidation?: number; 
-   utilisateurRole?: string;      // ← AJOUTER
-  utilisateurEquipe?: string;    // ← AJOUTER
+  duree?: number;
+  prochainValidateur?: string;
+  etapeValidation?: number;
+  utilisateurRole?: string;
+  utilisateurEquipe?: string;
 }
 
 export interface ValidationResponse {
@@ -52,75 +53,73 @@ export class RequestService {
     });
   }
 
-  getAllRequests(): Observable<DemandeTeletravail[]> {
-    return this.http.get<DemandeTeletravail[]>(this.apiUrl, {
+  // ✅ CORRECTION: Utiliser /api/camunda/demandes
+  createRequest(formData: FormData): Observable<any> {
+    const url = `${this.apiUrl}/camunda/demandes`;
+    console.log('📤 Envoi POST à:', url);
+    return this.http.post(url, formData, {
       headers: this.getHeaders()
     });
   }
 
-  getMyRequests(): Observable<DemandeTeletravail[]> {
-    return this.http.get<DemandeTeletravail[]>(`${this.apiUrl}/user`, {
+  // ✅ CORRECTION: Utiliser /api/camunda/demandes
+  getMyDemandes(): Observable<DemandeTeletravail[]> {
+    const url = `${this.apiUrl}/camunda/demandes`;
+    console.log('📤 Appel API:', url);
+    return this.http.get<DemandeTeletravail[]>(url, {
       headers: this.getHeaders()
     });
   }
-  // request.service.ts
-uploadJustificatif(demandeId: number, formData: FormData): Observable<any> {
-  const token = this.authService.getToken();
-  return this.http.put(`${this.apiUrl}/demandes/${demandeId}/justificatif`, formData, {
-    headers: new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    })
-  });
-}
 
-
-getDemandeSuivi(demandeId: number): Observable<any> {
-  const token = this.authService.getToken();
-  console.log('📤 getDemandeSuivi appelé avec ID:', demandeId);
-  
-  return this.http.get(`${this.apiUrl}/camunda/demandes/${demandeId}/suivi`, {
-    headers: new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    })
-  });
-}
-
-  createRequest(formData: FormData): Observable<DemandeTeletravail> {
-    return this.http.post<DemandeTeletravail>(this.apiUrl, formData, {
+  // ✅ CORRECTION: Utiliser /api/camunda/demandes/all
+  getAllDemandes(): Observable<DemandeTeletravail[]> {
+    const url = `${this.apiUrl}/camunda/demandes/all`;
+    return this.http.get<DemandeTeletravail[]>(url, {
       headers: this.getHeaders()
+    });
+  }
+
+  // ✅ CORRECTION: Utiliser /api/camunda/demandes/{id}/suivi
+  getDemandeSuivi(demandeId: number): Observable<any> {
+    const url = `${this.apiUrl}/camunda/demandes/${demandeId}/suivi`;
+    console.log('📤 getDemandeSuivi:', url);
+    return this.http.get(url, {
+      headers: this.getHeaders()
+    });
+  }
+
+  // ✅ CORRECTION: Utiliser /api/camunda/demandes/{id}
+  deleteRequest(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/camunda/demandes/${id}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  // ✅ Garder les autres méthodes avec les bons paths
+  uploadJustificatif(demandeId: number, formData: FormData): Observable<any> {
+    const token = this.authService.getToken();
+    return this.http.put(`${this.apiUrl}/demandes/${demandeId}/justificatif`, formData, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      })
     });
   }
 
   updateRequest(id: number, formData: FormData): Observable<DemandeTeletravail> {
-    return this.http.put<DemandeTeletravail>(`${this.apiUrl}/${id}`, formData, {
-      headers: this.getHeaders()
-    });
-  }
-
-  deleteRequest(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
+    return this.http.put<DemandeTeletravail>(`${this.apiUrl}/demandes/${id}`, formData, {
       headers: this.getHeaders()
     });
   }
 
   approveRequest(id: number): Observable<DemandeTeletravail> {
-    return this.http.put<DemandeTeletravail>(`${this.apiUrl}/${id}/approve`, {}, {
+    return this.http.put<DemandeTeletravail>(`${this.apiUrl}/demandes/${id}/approve`, {}, {
       headers: this.getHeaders()
     });
   }
 
   rejectRequest(id: number): Observable<DemandeTeletravail> {
-    return this.http.put<DemandeTeletravail>(`${this.apiUrl}/${id}/reject`, {}, {
+    return this.http.put<DemandeTeletravail>(`${this.apiUrl}/demandes/${id}/reject`, {}, {
       headers: this.getHeaders()
     });
   }
-getMyDemandes(): Observable<DemandeTeletravail[]> {
-  const token = this.authService.getToken();
-  return this.http.get<DemandeTeletravail[]>(`${this.apiUrl}/camunda/demandes`, {
-    headers: new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    })
-  });
-}
 }

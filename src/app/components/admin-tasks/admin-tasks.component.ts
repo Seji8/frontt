@@ -1,11 +1,12 @@
 // admin-tasks.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CamundaService, Task } from '../../services/camunda.service';
 import { AuthService } from '../../auth.service';
 import { RequestService } from '../../services/request.service';
 import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-admin-tasks',
   standalone: true,
@@ -28,15 +29,20 @@ export class AdminTasksComponent implements OnInit {
     private camundaService: CamundaService,
     private authService: AuthService,
     private requestService: RequestService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef  // ← AJOUTER
   ) {}
 
   ngOnInit(): void {
     this.loadTasks();
+    this.cdr.detectChanges();
   }
 
   loadTasks(): void {
     this.loading = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+    
     console.log('📥 Chargement des tâches admin...');
     
     this.camundaService.getAdminTasks().subscribe({
@@ -44,30 +50,34 @@ export class AdminTasksComponent implements OnInit {
         console.log('✅ Tâches admin reçues:', tasks);
         this.tasks = tasks;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Erreur:', error);
         this.errorMessage = 'Erreur lors du chargement';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   // Voir le détail de la demande
   viewDemandeDetail(task: Task): void {
-  const demandeId = task.demandeId;
-  if (!demandeId) {
-    alert('ID de demande non trouvé');
-    return;
+    const demandeId = task.demandeId;
+    if (!demandeId) {
+      alert('ID de demande non trouvé');
+      return;
+    }
+    this.cdr.detectChanges();
+    // Navigation vers la page de détail
+    this.router.navigate(['/admin/demande', demandeId]);
   }
-  // Navigation vers la page de détail
-  this.router.navigate(['/admin/demande', demandeId]);
-}
 
   closeDetailModal(): void {
     this.showDetailModal = false;
     this.selectedDemande = null;
     this.selectedFile = null;
+    this.cdr.detectChanges();
   }
 
   // Sélectionner un fichier
@@ -75,6 +85,7 @@ export class AdminTasksComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
+      this.cdr.detectChanges();
     }
   }
 
@@ -94,24 +105,30 @@ export class AdminTasksComponent implements OnInit {
         alert('✅ Justificatif ajouté avec succès');
         this.closeDetailModal();
         this.loadTasks();
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('❌ Erreur upload:', error);
         alert('Erreur lors de l\'upload');
+        this.cdr.detectChanges();
       }
     });
   }
 
   approveTask(task: Task): void {
     if (confirm(`Approuver la demande "${task.name}" ?`)) {
+      this.cdr.detectChanges();
+      
       this.camundaService.approveTask(task.id, 'Approuvé par admin').subscribe({
         next: () => {
           alert('✅ Demande approuvée');
           this.loadTasks();
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Erreur:', error);
           alert('❌ Erreur lors de l\'approbation');
+          this.cdr.detectChanges();
         }
       });
     }
@@ -121,14 +138,18 @@ export class AdminTasksComponent implements OnInit {
     if (confirm(`Rejeter la demande "${task.name}" ?`)) {
       const raison = prompt('Motif du rejet :');
       if (raison) {
+        this.cdr.detectChanges();
+        
         this.camundaService.rejectTask(task.id, raison).subscribe({
           next: () => {
             alert('❌ Demande rejetée');
             this.loadTasks();
+            this.cdr.detectChanges();
           },
           error: (error) => {
             console.error('Erreur:', error);
             alert('❌ Erreur lors du rejet');
+            this.cdr.detectChanges();
           }
         });
       }

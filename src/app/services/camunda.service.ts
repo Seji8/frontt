@@ -34,7 +34,7 @@ export interface DemandeResponse {
   providedIn: 'root'
 })
 export class CamundaService {
-  private apiUrl = 'http://localhost:8080/api/camunda';
+  private apiUrl = 'http://localhost:8080/api';
 
   constructor(
     private http: HttpClient,
@@ -50,7 +50,6 @@ export class CamundaService {
     });
   }
 
-  // Créer une nouvelle demande de télétravail
   createDemande(motif: string, dateDebut: string, dateFin: string, type: string): Observable<any> {
     const formData = new FormData();
     formData.append('motif', motif);
@@ -59,54 +58,54 @@ export class CamundaService {
     formData.append('type', type);
     
     const token = this.authService.getToken();
-    return this.http.post(`${this.apiUrl}/demandes`, formData, {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      })
-    });
-  }
-
-  // Obtenir les tâches du chef connecté
-  getMyTasks(): Observable<Task[]> {
-    const token = this.authService.getToken();
-    console.log('📤 Récupération des tâches chef...');
+    const url = `${this.apiUrl}/camunda/demandes`;
+    console.log('📤 createDemande URL:', url);
     
-    return this.http.get<Task[]>(`${this.apiUrl}/taches/chef`, {
+    return this.http.post(url, formData, {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${token}`
       })
     });
   }
+  
+  getChefTasks(): Observable<Task[]> {
+    const url = `${this.apiUrl}/camunda/taches/chef`;
+    console.log('📤 getChefTasks URL:', url);
+    return this.http.get<Task[]>(url, {
+      headers: this.getHeaders()
+    });
+  }
 
-  // Obtenir les tâches admin
   getAdminTasks(): Observable<Task[]> {
-    const token = this.authService.getToken();
-    return this.http.get<Task[]>(`${this.apiUrl}/taches/admin`, {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      })
+    const url = `${this.apiUrl}/camunda/taches/admin`;
+    console.log('📤 getAdminTasks URL:', url);
+    return this.http.get<Task[]>(url, {
+      headers: this.getHeaders()
     });
   }
 
-  // Approuver une tâche
   approveTask(taskId: string, commentaire?: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/taches/${taskId}/approuver`, 
-      { commentaire }, { headers: this.getHeaders() });
+    const url = `${this.apiUrl}/camunda/taches/${taskId}/approuver`;
+    console.log('📤 approveTask URL:', url);
+    return this.http.post(url, { commentaire }, { headers: this.getHeaders() });
   }
 
-  // Rejeter une tâche
   rejectTask(taskId: string, commentaire?: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/taches/${taskId}/rejeter`,
-      { commentaire }, { headers: this.getHeaders() });
+    const url = `${this.apiUrl}/camunda/taches/${taskId}/rejeter`;
+    console.log('📤 rejectTask URL:', url);
+    return this.http.post(url, { commentaire }, { headers: this.getHeaders() });
   }
 
-  // Récupérer mes demandes
   getMyDemandes(): Observable<DemandeResponse[]> {
+    const url = `${this.apiUrl}/camunda/demandes`;
+    console.log('📤 getMyDemandes URL:', url);
     const token = this.authService.getToken();
-    return this.http.get<DemandeResponse[]>(`${this.apiUrl}/demandes`, {
+    return this.http.get<DemandeResponse[]>(url, {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${token}`
       })
     });
   }
+
+
 }
