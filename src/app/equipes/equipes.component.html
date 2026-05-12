@@ -23,12 +23,14 @@
 
         <div class="form-group">
           <label for="chefId">Team Leader</label>
-          <select id="chefId" formControlName="chefId" class="form-control">
-            <option value="">-- Select a team leader --</option>
-            <option *ngFor="let user of users" [value]="user.id">
-              {{ user.nom }} ({{ user.role }})
-            </option>
-          </select>
+ <select id="chefId" formControlName="chefId" class="form-control">
+  <option value="">-- Select a team leader --</option>
+  <option *ngFor="let user of users" 
+          [value]="user.id"
+          [style.color]="user.equipeNom ? 'orange' : 'inherit'">
+    {{ getChefLabel(user) }}
+  </option>
+</select>
         </div>
 
         <div class="form-actions">

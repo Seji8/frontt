@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UserService } from './../services/user.service';
-import { AuthService } from '../auth.service';
+import { UserService } from '../core/services/user.service';
+import { AuthService } from '../core/auth.service';
 
 @Component({
   selector: 'app-equipes',
@@ -106,19 +106,20 @@ export class EquipesComponent implements OnInit {
     });
   }
 
-  loadUsers() {
-    this.userService.getAllUsers().subscribe({
-      next: (users) => {
-        this.users = users.filter(user => user.role === 'CHEF_EQUIPE');
-        console.log('Chefs potentiels:', this.users);
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Erreur chargement utilisateurs:', err);
-        this.cdr.detectChanges();
-      }
-    });
-  }
+ loadUsers() {
+  this.userService.getAllUsers().subscribe({
+    next: (users) => {
+      // Tous les chefs, pas de filtre d'exclusion
+      this.users = users.filter(user => user.role === 'CHEF_EQUIPE');
+      console.log('Chefs potentiels:', this.users);
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Erreur chargement utilisateurs:', err);
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   openForm() {
     if (!this.isAdminUser) {
@@ -269,4 +270,10 @@ export class EquipesComponent implements OnInit {
   canEdit(): boolean {
     return this.isAdminUser;
   }
+  getChefLabel(user: any): string {
+  if (user.equipeNom) {
+    return `${user.nom} — déjà chef de: ${user.equipeNom}`;
+  }
+  return user.nom;
+}
 }
