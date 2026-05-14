@@ -1,6 +1,6 @@
 // src/app/auth.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -12,17 +12,16 @@ export class AuthService {
   private tokenKey = 'auth_token';
   private roleKey = 'user_role';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
-   private currentUserSubject = new BehaviorSubject<any>(null);
+  private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(private http: HttpClient) {
     console.log('🔧 AuthService initialized');
-    console.log('📦 Token at startup:', this.getToken());
+    this.loadUserFromStorage();
   }
 
-  isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
-
-   private loadUserFromStorage() {
+  private loadUserFromStorage() {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       try {
@@ -34,16 +33,12 @@ export class AuthService {
     }
   }
 
-  // auth.service.ts
-login(email: string, password: string): Observable<any> {
+  login(email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, { email, password }).pipe(
       tap((response: any) => {
-        console.log('🔍 Login response complète:', response);
         if (response && response.token) {
           localStorage.setItem('auth_token', response.token);
           localStorage.setItem('user_role', response.role);
-          
-          // Stocker les infos utilisateur complètes
           const user = {
             id: response.userId,
             nom: response.nom || response.name,
@@ -53,13 +48,19 @@ login(email: string, password: string): Observable<any> {
           };
           localStorage.setItem('user', JSON.stringify(user));
           this.currentUserSubject.next(user);
+          this.isAuthenticatedSubject.next(true);
         }
       })
     );
   }
-getCurrentUserInfo(): Observable<any> {
-  return this.http.get(`${this.apiUrl}/me`);
-}
+
+  // ── Send token so /auth/me can authenticate the request ──
+  getCurrentUserInfo(): Observable<any> {
+    const token = this.getToken();
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return this.http.get(`${this.apiUrl}/me`, { headers });
+  }
+
   getCurrentUser(): any {
     const userStr = localStorage.getItem('user');
     if (userStr) {
@@ -72,18 +73,18 @@ getCurrentUserInfo(): Observable<any> {
     const user = this.getCurrentUser();
     return user?.nom || user?.name || 'Utilisateur';
   }
-logout(): void {
-  localStorage.removeItem('auth_token');
-  localStorage.removeItem('user_role');
-  localStorage.removeItem('user'); // ← ADD THIS
-  this.isAuthenticatedSubject.next(false);
-  this.currentUserSubject.next(null); // ← ADD THIS
-}
+
+  logout(): void {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user');
+    this.isAuthenticatedSubject.next(false);
+    this.currentUserSubject.next(null);
+  }
 
   getToken(): string | null {
     const token = localStorage.getItem(this.tokenKey);
     if (token === 'null' || token === 'undefined') {
-      console.warn('⚠️ Token is "null" string, removing it');
       localStorage.removeItem(this.tokenKey);
       return null;
     }

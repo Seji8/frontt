@@ -1,5 +1,16 @@
+<!-- Toast notifications (top-right, above everything) -->
+<p-toast position="top-right" [baseZIndex]="9999"></p-toast>
+
+<!-- PrimeNG confirm dialog -->
+<p-confirmDialog
+  [style]="{ width: '420px' }"
+  [baseZIndex]="10000"
+  styleClass="chef-confirm-dialog">
+</p-confirmDialog>
+
 <div class="chef-tasks-container">
-  <!-- Header -->
+
+  <!-- ── Header ── -->
   <div class="header">
     <div class="header-title">
       <i class="fas fa-users"></i>
@@ -15,29 +26,30 @@
     </div>
   </div>
 
-  <!-- Loading State -->
+  <!-- ── Loading ── -->
   <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
     <p>Chargement des demandes...</p>
   </div>
 
-  <!-- Error State -->
-  <div *ngIf="errorMessage" class="error-state">
+  <!-- ── Error ── -->
+  <div *ngIf="errorMessage && !loading" class="error-state">
     <i class="fas fa-exclamation-triangle"></i>
     <p>{{ errorMessage }}</p>
     <button class="btn-retry" (click)="loadTasks()">Réessayer</button>
   </div>
 
-  <!-- Empty State -->
+  <!-- ── Empty ── -->
   <div *ngIf="!loading && tasks.length === 0 && !errorMessage" class="empty-state">
     <div class="empty-icon">🏆</div>
     <h3>Aucune demande à valider</h3>
     <p>Vous avez traité toutes les demandes en attente.</p>
   </div>
 
-  <!-- Tasks Grid -->
+  <!-- ── Tasks grid ── -->
   <div class="tasks-grid" *ngIf="!loading && tasks.length > 0">
     <div class="task-card" *ngFor="let task of tasks">
+
       <div class="task-card-header">
         <div class="task-type">
           <i class="fas fa-user-check"></i>
@@ -61,71 +73,115 @@
           </div>
           <div class="info-item">
             <i class="fas fa-calendar-alt"></i>
-            <span>Période: {{ formatDateShort(task.dateDebut) }} → {{ formatDateShort(task.dateFin) }}</span>
+            <span>{{ formatDateShort(task.dateDebut) }} → {{ formatDateShort(task.dateFin) }}</span>
           </div>
           <div class="info-item">
             <i class="fas fa-hourglass-half"></i>
-            <span>Durée: {{ task.duree || 0 }} jour(s)</span>
+            <span>{{ task.duree || 0 }} jour(s)</span>
           </div>
           <div class="info-item">
             <i class="fas fa-comment"></i>
-            <span>Motif: {{ task.motif || 'Non spécifié' }}</span>
+            <span>{{ task.motif || 'Non spécifié' }}</span>
           </div>
           <div class="info-item">
             <i class="fas fa-code-branch"></i>
-            <span class="process-id">Process: {{ task.processInstanceId | slice:0:8 }}...</span>
+            <span class="process-id">{{ task.processInstanceId | slice:0:8 }}...</span>
           </div>
         </div>
-
+      </div>
 
       <div class="task-card-footer">
-        <!-- ✅ FIX: openDetailModal au lieu de viewDemandeDetail -->
         <button class="btn-detail" (click)="openDetailModal(task)">
           <i class="fas fa-file-alt"></i> Voir le détail
         </button>
+
         <div class="task-actions">
-          <button class="btn-approve" (click)="approveTask(task)">
-            <i class="fas fa-check-circle"></i> Approuver
+          <!-- Approve -->
+          <button
+            class="btn-approve"
+            (click)="approveTask(task)"
+            [disabled]="isProcessing(task.id)"
+            [class.btn-processing]="isProcessing(task.id)">
+            <i class="fas"
+              [class.fa-check-circle]="!isProcessing(task.id)"
+              [class.fa-spinner]="isProcessing(task.id)"
+              [class.fa-spin]="isProcessing(task.id)"></i>
+            {{ isProcessing(task.id) ? 'En cours...' : 'Approuver' }}
           </button>
-          <button class="btn-reject" (click)="rejectTask(task)">
+
+          <!-- Reject — opens modal for reason input -->
+          <button
+            class="btn-reject"
+            (click)="rejectTask(task)"
+            [disabled]="isProcessing(task.id)">
             <i class="fas fa-times-circle"></i> Rejeter
           </button>
         </div>
       </div>
+
     </div>
   </div>
+
 </div>
 
-<!-- Modal Détail avec motif de rejet -->
+<!-- ── Detail / Reject modal ── -->
 <div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
+
     <div class="modal-header">
       <h3>Détail de la demande</h3>
-      <button class="modal-close" (click)="closeDetailModal()">&times;</button>
+      <button class="modal-close" (click)="closeDetailModal()" aria-label="Fermer">&times;</button>
     </div>
-    <div class="modal-body" *ngIf="selectedTask">
-      <p><strong>ID:</strong> {{ selectedTask.demandeId }}</p>
-      <p><strong>Employé:</strong> {{ selectedTask.utilisateurNom }}</p>
-      <p><strong>Motif:</strong> {{ selectedTask.motif }}</p>
-      <p><strong>Date début:</strong> {{ formatDate(selectedTask.dateDebut) }}</p>
-      <p><strong>Date fin:</strong> {{ formatDate(selectedTask.dateFin) }}</p>
-      <p><strong>Durée:</strong> {{ selectedTask.duree }} jours</p>
-      <p><strong>Process ID:</strong> {{ selectedTask.processInstanceId }}</p>
 
-   
+    <div class="modal-body" *ngIf="selectedTask">
+      <p><strong>ID :</strong> #{{ selectedTask.demandeId }}</p>
+      <p><strong>Employé :</strong> {{ selectedTask.utilisateurNom }}</p>
+      <p><strong>Motif :</strong> {{ selectedTask.motif || 'Non spécifié' }}</p>
+      <p><strong>Date début :</strong> {{ formatDate(selectedTask.dateDebut) }}</p>
+      <p><strong>Date fin :</strong> {{ formatDate(selectedTask.dateFin) }}</p>
+      <p><strong>Durée :</strong> {{ selectedTask.duree }} jour(s)</p>
+      <p><strong>Process ID :</strong>
+        <span class="process-id">{{ selectedTask.processInstanceId | slice:0:8 }}...</span>
+      </p>
+
+      <!-- Reject reason input -->
       <div class="reject-reason">
-        <label for="rejectReason">Motif du rejet :</label>
+        <label for="rejectReason">Motif du rejet <span class="required">*</span></label>
         <textarea
           id="rejectReason"
           [(ngModel)]="rejectReason"
           placeholder="Saisissez le motif du rejet..."
-          rows="3"></textarea>
+          rows="3">
+        </textarea>
+        <span class="field-hint" *ngIf="!rejectReason.trim()">
+          Requis pour pouvoir rejeter la demande.
+        </span>
       </div>
     </div>
+
     <div class="modal-footer">
-      <button class="btn-approve" (click)="approveTask(selectedTask!)">Approuver</button>
-      <button class="btn-reject" (click)="rejectTaskWithReason()">Rejeter avec motif</button>
+      <!-- Approve from modal -->
+      <button
+        class="btn-approve"
+        (click)="approveTask(selectedTask!)"
+        [disabled]="isProcessing(selectedTask?.id || '')">
+        <i class="fas"
+          [class.fa-check-circle]="!isProcessing(selectedTask?.id || '')"
+          [class.fa-spinner]="isProcessing(selectedTask?.id || '')"
+          [class.fa-spin]="isProcessing(selectedTask?.id || '')"></i>
+        Approuver
+      </button>
+
+      <!-- Reject with reason -->
+      <button
+        class="btn-reject"
+        (click)="rejectTaskWithReason()"
+        [disabled]="!rejectReason.trim() || isProcessing(selectedTask?.id || '')">
+        <i class="fas fa-times-circle"></i> Rejeter avec motif
+      </button>
+
       <button class="btn-secondary" (click)="closeDetailModal()">Fermer</button>
     </div>
+
   </div>
 </div>

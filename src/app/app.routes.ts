@@ -12,6 +12,7 @@ import { NouvelleDemandeComponent } from './features/employe/nouvelle-demande/no
 import { ToutesDemandesComponent } from './features/admin/toutes-demandes/toutes-demandes.component';
 import { RhComponent } from './features/rh/rh.component';
 import { RhAuditComponent } from './features/rh/rh-audit/rh-audit.component';
+import { MonProfilComponent } from './features/employe/profil/profil/profil.component';
 
 export const routes: Routes = [
   // Public
@@ -25,6 +26,7 @@ export const routes: Routes = [
   // Employé
   { path: 'mes-demandes', component: MesDemandesComponent, canActivate: [AuthGuard] },
   { path: 'nouvelle-demande', component: NouvelleDemandeComponent, canActivate: [AuthGuard] },
+  { path: 'profil', component: MonProfilComponent, canActivate: [AuthGuard] },
 
   // Chef
   { path: 'chef/tasks', component: ChefTasksComponent, canActivate: [AuthGuard] },

@@ -1,40 +1,72 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
+// PrimeNG
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+
 import { CamundaService, Task } from '../../../core/services/camunda.service';
 import { AuthService } from '../../../core/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chef-tasks',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ConfirmDialogModule,
+    ToastModule,
+  ],
+  providers: [
+    ConfirmationService,
+    MessageService,
+  ],
   templateUrl: './chef-tasks.component.html',
   styleUrls: ['./chef-tasks.component.css']
 })
-export class ChefTasksComponent implements OnInit {
+export class ChefTasksComponent implements OnInit, OnDestroy {
+
   tasks: Task[] = [];
   loading = false;
   errorMessage = '';
+
   selectedTask: Task | null = null;
   showDetailModal = false;
   rejectReason = '';
+
+  /** Tracks the task currently being actioned so we can show a spinner on its buttons */
+  processingTaskId: string | null = null;
+
+  private subs = new Subscription();
 
   constructor(
     private camundaService: CamundaService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
     this.loadTasks();
   }
 
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
+  // ── Data ──────────────────────────────────────────────────
+
   loadTasks(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.camundaService.getChefTasks().subscribe({
+
+    const sub = this.camundaService.getChefTasks().subscribe({
       next: (tasks) => {
         this.tasks = tasks;
         this.loading = false;
@@ -48,20 +80,20 @@ export class ChefTasksComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+
+    this.subs.add(sub);
   }
 
-  viewDemandeDetail(task: Task): void {
-    if (!task.demandeId) {
-      alert('ID de demande non trouvé');
-      return;
-    }
-    this.router.navigate(['/chef/demande', task.demandeId]);
+  refresh(): void {
+    this.loadTasks();
   }
+
+  // ── Modal ─────────────────────────────────────────────────
 
   openDetailModal(task: Task): void {
     this.selectedTask = task;
-    this.showDetailModal = true;
     this.rejectReason = '';
+    this.showDetailModal = true;
     this.cdr.detectChanges();
   }
 
@@ -72,49 +104,140 @@ export class ChefTasksComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  approveTask(task: Task): void {
-    if (confirm(`Approuver la demande de ${task.utilisateurNom || task.name} ?`)) {
-      this.camundaService.approveTask(task.id, 'Approuvé par le chef').subscribe({
-        next: () => {
-          alert('✅ Demande approuvée avec succès');
-          this.loadTasks();
-          this.closeDetailModal();
-        },
-        error: () => alert('❌ Erreur lors de l\'approbation')
+  viewDemandeDetail(task: Task): void {
+    if (!task.demandeId) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Introuvable',
+        detail: 'Aucun ID de demande associé à cette tâche.',
+        life: 4000,
       });
+      return;
     }
+    this.router.navigate(['/chef/demande', task.demandeId]);
   }
+
+  // ── Approve ───────────────────────────────────────────────
+
+  approveTask(task: Task): void {
+    this.confirmationService.confirm({
+      header: 'Confirmer l\'approbation',
+      message: `Approuver la demande de <strong>${task.utilisateurNom || task.name}</strong> ?`,
+      icon: 'pi pi-check-circle',
+      acceptLabel: 'Approuver',
+      rejectLabel: 'Annuler',
+      acceptButtonStyleClass: 'p-button-success p-button-sm',
+      rejectButtonStyleClass: 'p-button-text p-button-sm',
+      accept: () => {
+        this.doApprove(task);
+      }
+    });
+  }
+
+  private doApprove(task: Task): void {
+    this.processingTaskId = task.id;
+
+    const sub = this.camundaService.approveTask(task.id, 'Approuvé par le chef').subscribe({
+      next: () => {
+        this.processingTaskId = null;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Demande approuvée',
+          detail: `La demande de ${task.utilisateurNom || task.name} a été approuvée.`,
+          life: 4000,
+        });
+        this.loadTasks();
+        this.closeDetailModal();
+      },
+      error: (err) => {
+        this.processingTaskId = null;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: err.error?.message || 'Impossible d\'approuver la demande.',
+          life: 5000,
+        });
+        this.cdr.detectChanges();
+      }
+    });
+
+    this.subs.add(sub);
+  }
+
+  // ── Reject (card-level — opens modal first) ───────────────
 
   rejectTask(task: Task): void {
-    const raison = prompt('Motif du rejet :');
-    if (raison?.trim()) {
-      this.camundaService.rejectTask(task.id, raison).subscribe({
-        next: () => {
-          alert('❌ Demande rejetée');
-          this.loadTasks();
-          this.closeDetailModal();
-        },
-        error: () => alert('❌ Erreur lors du rejet')
-      });
-    }
+    // Open the modal so the user can type a reason, then confirm
+    this.openDetailModal(task);
   }
+
+  // ── Reject with reason (from modal) ──────────────────────
 
   rejectTaskWithReason(): void {
-    if (this.selectedTask && this.rejectReason.trim()) {
-      this.camundaService.rejectTask(this.selectedTask.id, this.rejectReason).subscribe({
-        next: () => {
-          alert('❌ Demande rejetée');
-          this.loadTasks();
-          this.closeDetailModal();
-        },
-        error: () => alert('❌ Erreur lors du rejet')
+    if (!this.selectedTask) return;
+
+    if (!this.rejectReason.trim()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Motif requis',
+        detail: 'Veuillez saisir un motif de rejet avant de continuer.',
+        life: 4000,
       });
-    } else {
-      alert('Veuillez saisir un motif de rejet');
+      return;
     }
+
+    const task = this.selectedTask;
+
+    this.confirmationService.confirm({
+      header: 'Confirmer le rejet',
+      message: `Rejeter la demande de <strong>${task.utilisateurNom || task.name}</strong> ?<br><em>${this.rejectReason}</em>`,
+      icon: 'pi pi-times-circle',
+      acceptLabel: 'Rejeter',
+      rejectLabel: 'Annuler',
+      acceptButtonStyleClass: 'p-button-danger p-button-sm',
+      rejectButtonStyleClass: 'p-button-text p-button-sm',
+      accept: () => {
+        this.doReject(task, this.rejectReason);
+      }
+    });
   }
 
-  // Méthodes de formatage sécurisées
+  private doReject(task: Task, reason: string): void {
+    this.processingTaskId = task.id;
+
+    const sub = this.camundaService.rejectTask(task.id, reason).subscribe({
+      next: () => {
+        this.processingTaskId = null;
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Demande rejetée',
+          detail: `La demande de ${task.utilisateurNom || task.name} a été rejetée.`,
+          life: 4000,
+        });
+        this.loadTasks();
+        this.closeDetailModal();
+      },
+      error: (err) => {
+        this.processingTaskId = null;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: err.error?.message || 'Impossible de rejeter la demande.',
+          life: 5000,
+        });
+        this.cdr.detectChanges();
+      }
+    });
+
+    this.subs.add(sub);
+  }
+
+  // ── Helpers ───────────────────────────────────────────────
+
+  isProcessing(taskId: string): boolean {
+    return this.processingTaskId === taskId;
+  }
+
   formatDate(date: string | undefined): string {
     if (!date) return 'Non définie';
     try {
@@ -136,9 +259,5 @@ export class ChefTasksComponent implements OnInit {
     } catch {
       return 'Date invalide';
     }
-  }
-
-  refresh(): void {
-    this.loadTasks();
   }
 }

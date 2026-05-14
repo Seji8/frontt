@@ -95,5 +95,13 @@ deleteEquipe(id: number): Observable<void> {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
+  updateMyProfile(data: UpdateUserRequest): Observable<User> {
+  return this.http.put<User>(
+    `${this.apiUrl}/me`,   // hits /api/users/me
+    data,
+    { headers: this.getHeaders() }
+  );
+}
+  
 }
 

@@ -61,17 +61,28 @@
         <i class="fas fa-chart-bar"></i>
         <span *ngIf="!isSidebarCollapsed">Statistiques RH</span>
       </a>
+      
+      <a *ngIf="isRH() || isAdmin()" (click)="navigateTo('rh/audit')"
+         [class.active]="isActive('rh/audit')" class="nav-item">
+        <i class="fas fa-chart-bar"></i>
+        <span *ngIf="!isSidebarCollapsed">Audit</span>
+      </a>
+      
 
       <a *ngIf="isAdmin()" (click)="navigateTo('/admin/tasks')"
          [class.active]="isActive('/admin/tasks')" class="nav-item">
         <i class="fas fa-tasks"></i>
         <span *ngIf="!isSidebarCollapsed">Demandes à valider</span>
       </a>
-    </nav>
+           </nav>
 
     <div class="sidebar-footer">
       <div class="user-info">
-        <div class="avatar"><i class="fas fa-user-circle"></i></div>
+        <div class="avatar">
+          
+          <a *ngIf="!isAdmin()" (click)="navigateTo('/profil')"
+         [class.active]="isActive('/profil')" class="nav-item"><i class="fas fa-user-circle"></i>      </a>
+            </div>
         <div *ngIf="!isSidebarCollapsed" class="user-details">
           <span class="user-name">{{ userName }}</span>
           <span class="user-role">{{ userRole }}</span>
@@ -140,10 +151,7 @@
       </div>
 
       <!-- Current user info -->
-      <div class="top-user">
-        <span class="top-user-name">{{ userName }}</span>
-        <span class="top-user-role">{{ userRole }}</span>
-      </div>
+    
     </div>
   </header>
 

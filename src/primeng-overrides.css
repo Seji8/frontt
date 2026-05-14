@@ -1,0 +1,203 @@
+/* ============================================================
+   primeng-overrides.css
+   Place this file at src/primeng-overrides.css
+   Add it AFTER the PrimeNG theme in angular.json styles array
+   ============================================================ */
+
+/* ── Strip PrimeNG's opinionated base so our design system wins ── */
+
+/* Confirm Dialog */
+.p-confirmdialog.p-dialog .p-dialog-header {
+  background: var(--bg-surface) !important;
+  border-bottom: 0.5px solid var(--border-soft) !important;
+  padding: 16px 20px !important;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+}
+
+.p-confirmdialog.p-dialog .p-dialog-header .p-dialog-title {
+  font-family: var(--font-display) !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--navy) !important;
+}
+
+.p-confirmdialog.p-dialog .p-dialog-header .p-dialog-header-icon {
+  color: var(--text-muted) !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: var(--radius-sm) !important;
+}
+.p-confirmdialog.p-dialog .p-dialog-header .p-dialog-header-icon:hover {
+  background: var(--red-bg) !important;
+  color: var(--red) !important;
+}
+
+.p-confirmdialog.p-dialog .p-dialog-content {
+  background: var(--bg-surface) !important;
+  padding: 20px !important;
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.6 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+
+.p-confirmdialog.p-dialog .p-dialog-content .p-confirm-dialog-icon {
+  font-size: 22px !important;
+  flex-shrink: 0 !important;
+  margin-top: 1px !important;
+}
+.p-confirmdialog.p-dialog .p-dialog-content .pi-check-circle { color: var(--green) !important; }
+.p-confirmdialog.p-dialog .p-dialog-content .pi-times-circle { color: var(--red) !important; }
+.p-confirmdialog.p-dialog .p-dialog-content .pi-exclamation-triangle { color: var(--amber) !important; }
+
+.p-confirmdialog.p-dialog .p-dialog-content .p-confirm-dialog-message {
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+}
+
+.p-confirmdialog.p-dialog .p-dialog-footer {
+  background: var(--bg-surface) !important;
+  border-top: 0.5px solid var(--border-soft) !important;
+  padding: 12px 20px !important;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+/* Dialog wrapper shadow & radius */
+.p-dialog {
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 0.5px solid var(--border-soft) !important;
+  overflow: hidden !important;
+}
+
+/* ── Confirm dialog buttons ── */
+.p-confirmdialog .p-button {
+  height: 34px !important;
+  padding: 0 18px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  font-family: var(--font-body) !important;
+  border-radius: var(--radius-sm) !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: all 0.15s !important;
+}
+
+/* Success (approve) */
+.p-confirmdialog .p-button.p-button-success {
+  background: var(--green-bg) !important;
+  color: #065f46 !important;
+  border: 0.5px solid transparent !important;
+}
+.p-confirmdialog .p-button.p-button-success:hover {
+  background: var(--green) !important;
+  color: #fff !important;
+}
+
+/* Danger (reject) */
+.p-confirmdialog .p-button.p-button-danger {
+  background: var(--red-bg) !important;
+  color: #991b1b !important;
+  border: 0.5px solid transparent !important;
+}
+.p-confirmdialog .p-button.p-button-danger:hover {
+  background: var(--red) !important;
+  color: #fff !important;
+}
+
+/* Text / cancel button */
+.p-confirmdialog .p-button.p-button-text,
+.p-confirmdialog .p-button.p-button-outlined {
+  background: var(--bg-muted) !important;
+  color: var(--text-secondary) !important;
+  border: 0.5px solid var(--border) !important;
+}
+.p-confirmdialog .p-button.p-button-text:hover,
+.p-confirmdialog .p-button.p-button-outlined:hover {
+  background: var(--navy) !important;
+  color: #fff !important;
+  border-color: var(--navy) !important;
+}
+
+/* ── Toast ── */
+.p-toast {
+  z-index: 9999 !important;
+  width: 340px !important;
+}
+
+.p-toast .p-toast-message {
+  border-radius: var(--radius-md) !important;
+  border: none !important;
+  box-shadow: var(--shadow-md) !important;
+  font-family: var(--font-body) !important;
+  margin-bottom: 8px !important;
+  overflow: hidden !important;
+}
+
+.p-toast .p-toast-message-content {
+  padding: 12px 14px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+}
+
+.p-toast .p-toast-summary {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  margin-bottom: 2px !important;
+}
+
+.p-toast .p-toast-detail {
+  font-size: 12px !important;
+  opacity: 0.85 !important;
+  line-height: 1.5 !important;
+}
+
+.p-toast .p-toast-icon-close {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 4px !important;
+  opacity: 0.6 !important;
+}
+.p-toast .p-toast-icon-close:hover { opacity: 1 !important; }
+
+/* Success toast */
+.p-toast .p-toast-message-success {
+  background: var(--green-bg) !important;
+  border-left: 3px solid var(--green) !important;
+  color: #065f46 !important;
+}
+.p-toast .p-toast-message-success .p-toast-message-icon,
+.p-toast .p-toast-message-success .p-toast-icon-close { color: var(--green) !important; }
+
+/* Info toast */
+.p-toast .p-toast-message-info {
+  background: var(--indigo-dim) !important;
+  border-left: 3px solid var(--indigo) !important;
+  color: var(--indigo) !important;
+}
+.p-toast .p-toast-message-info .p-toast-message-icon,
+.p-toast .p-toast-message-info .p-toast-icon-close { color: var(--indigo) !important; }
+
+/* Warn toast */
+.p-toast .p-toast-message-warn {
+  background: var(--amber-bg) !important;
+  border-left: 3px solid var(--amber) !important;
+  color: #92400e !important;
+}
+.p-toast .p-toast-message-warn .p-toast-message-icon,
+.p-toast .p-toast-message-warn .p-toast-icon-close { color: var(--amber) !important; }
+
+/* Error toast */
+.p-toast .p-toast-message-error {
+  background: var(--red-bg) !important;
+  border-left: 3px solid var(--red) !important;
+  color: #991b1b !important;
+}
+.p-toast .p-toast-message-error .p-toast-message-icon,
+.p-toast .p-toast-message-error .p-toast-icon-close { color: var(--red) !important; }
