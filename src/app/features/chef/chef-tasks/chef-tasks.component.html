@@ -1,0 +1,134 @@
+<div class="chef-tasks-container">
+
+  <!-- HERO (comme admin) -->
+  <div class="hero">
+
+    <div class="hero-left">
+      <div class="hero-badge">
+        👨‍💼 Validation Chef
+      </div>
+
+      <h2>Centre de validation des demandes</h2>
+      <p>Gérez et validez les demandes des employés</p>
+    </div>
+
+    <div class="hero-right">
+      <div class="badge-count">
+        {{ tasks.length }} tâche(s)
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STATES -->
+  <div *ngIf="loading" class="state-box">
+    <div class="spinner"></div>
+    <span>Chargement des tâches...</span>
+  </div>
+
+  <div *ngIf="errorMessage" class="state-box error">
+    ⚠ {{ errorMessage }}
+  </div>
+
+  <div *ngIf="!loading && tasks.length === 0" class="empty-box">
+    <div class="empty-icon">✅</div>
+    <h3>Aucune tâche</h3>
+    <p>Toutes les demandes ont été traitées</p>
+  </div>
+
+  <!-- GRID (comme admin) -->
+  <div class="tasks-grid" *ngIf="!loading && tasks.length > 0">
+
+    <div class="task-card" *ngFor="let task of tasks">
+
+      <!-- HEADER -->
+      <div class="task-header">
+        <span class="task-type">Validation Chef</span>
+        <span class="task-date">
+          {{ formatDate(task.createTime) }}
+        </span>
+      </div>
+
+      <!-- BODY -->
+      <div class="task-body">
+
+        <h3 class="task-title">
+          {{ task.utilisateurNom || task.name }}
+        </h3>
+
+        <div class="task-info">
+          <div>👤 {{ task.assignee || 'Non assignée' }}</div>
+          <div class="process-clean">
+            Process actif
+          </div>
+        </div>
+
+      </div>
+      <!-- SCORE -->
+<div class="score-block" *ngIf="getScore(task.demandeId); let score">
+
+  <div class="score-top">
+    <span>📊 Score de disponibilité de l’équipe</span>
+  </div>
+
+  <div class="score-row">
+
+    <div class="score-circle" [ngClass]="'score-' + score.niveau">
+      {{ score.score }}%
+    </div>
+
+    <div class="score-meta">
+      <div class="score-label">{{ score.label }}</div>
+      <div class="score-small">
+        {{ score.demandesEnChevauchement }} / {{ score.tailleEquipe }} en télétravail
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bar">
+    <div class="fill"
+         [ngClass]="'fill-' + score.niveau"
+         [style.width.%]="score.score"></div>
+  </div>
+
+</div>
+
+<div class="score-loading"
+     *ngIf="getScore(task.demandeId) === null && task.demandeId">
+  ⏳ Calcul du score...
+</div>
+
+      <!-- FOOTER -->
+      <div class="task-footer">
+
+        <button class="btn-outline" (click)="viewDemandeDetail(task)">
+          👁 Détails
+        </button>
+
+        <div class="actions">
+
+          <div class="actions">
+          <button class="btn-approve" (click)="approveTask(task)">
+            ✔ Approuver
+          </button>
+
+          <button class="btn-reject" (click)="rejectTask(task)">
+            ✖ Rejeter
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+  
+

@@ -1,0 +1,329 @@
+/* ===================== CONTAINER ===================== */
+
+.users-container {
+  max-width: 1050px; 
+  margin: 20px auto;
+  padding: 0 10px;
+  background: #f4f7fb;
+  min-height: 100vh;
+}
+
+/* ===================== HEADER ===================== */
+
+.users-container h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 25px;
+}
+
+/* ===================== ALERTS ===================== */
+
+.alert {
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* ===================== ACTION BAR ===================== */
+
+.actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 25px;
+}
+
+/* ===================== BUTTONS ===================== */
+
+.btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  padding: 12px 22px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 12px 20px;
+}
+
+.btn-warning {
+  background: #e5e7eb;
+  color: #111827;
+  padding: 12px 20px;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-small {
+  padding: 6px 10px; /* plus petit */
+  font-size: 11px;
+  border-radius: 8px;
+  margin-right: 6px;
+}
+
+.btn-small:hover {
+  transform: scale(1.03);
+}
+
+/* ===================== FORM CARD ===================== */
+
+.form-container {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.form-container h3 {
+  font-size: 24px;
+  margin-bottom: 25px;
+  color: #0f172a;
+}
+
+/* ===================== INFO BOX ===================== */
+
+.info-message {
+  background: #eff6ff;
+  border-left: 5px solid #2563eb;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  color: #1e40af;
+}
+
+/* ===================== FORM ===================== */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.form-control {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid #dbe3ec;
+  border-radius: 14px;
+  background: #f8fafc;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #2563eb;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+textarea.form-control {
+  resize: none;
+}
+
+/* ===================== ERRORS ===================== */
+
+.error-message {
+  margin-top: 6px;
+  color: #ef4444;
+  font-size: 13px;
+}
+
+/* ===================== FORM ACTIONS ===================== */
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* ===================== TABLE CONTAINER ===================== */
+
+.users-table-container {
+   background: #ffffff;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow:
+    0 4px 20px rgba(15, 23, 42, 0.06),
+    0 1px 3px rgba(15, 23, 42, 0.08);
+
+  overflow-x: auto;
+}
+
+/* ===================== TABLE ===================== */
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.users-table thead {
+  background: #f8fafc;
+}
+
+.users-table th {
+  background: #f8fafc;
+  color: #475569;
+
+  padding: 12px 10px; /* réduit */
+  font-size: 12px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.users-table td {
+  padding: 10px; /* réduit */
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 13px;
+}
+
+/* HOVER */
+
+.users-table tbody tr {
+  transition: 0.2s;
+}
+
+.users-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* ===================== ROLE BADGES ===================== */
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  color: white;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.role-badge.ADMIN {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.role-badge.RH {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+}
+
+.role-badge.CHEF_EQUIPE {
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+}
+
+.role-badge.EMPLOYE {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+/* ===================== EMPTY STATE ===================== */
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+
+.empty-state p {
+  font-size: 16px;
+}
+
+.empty-state a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.empty-state a:hover {
+  text-decoration: underline;
+}
+
+/* ===================== LOADING ===================== */
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 16px;
+  color: #64748b;
+}
+
+/* ===================== RESPONSIVE ===================== */
+
+@media (max-width: 900px) {
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .users-container {
+    padding: 15px;
+  }
+
+   .users-table {
+    font-size: 12px;
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 8px;
+  }
+
+  .btn-small {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+}

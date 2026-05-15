@@ -1,0 +1,102 @@
+<div class="mes-demandes-container">
+  <div class="header">
+    <h2>Toutes les demandes</h2>
+    <span class="count-badge">{{ getFilteredCount() }} / {{ getTotalCount() }}</span>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-bar">
+    <div class="filters-row">
+      <div class="filter-group search-group">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+          placeholder="Rechercher par motif, nom, ID..."
+          class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <i class="fas fa-tag"></i>
+        <select [(ngModel)]="statusFilter" (change)="applyFilters()" class="filter-select">
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <i class="fas fa-calendar-week"></i>
+        <select [(ngModel)]="typeFilter" (change)="applyFilters()" class="filter-select">
+          <option *ngFor="let option of typeOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <button class="btn-reset" (click)="resetFilters()">
+        <i class="fas fa-undo-alt"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <!-- Erreur -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Vide -->
+  <div *ngIf="!loading && !error && filteredDemandes.length === 0" class="empty">
+    <div class="empty-icon">📋</div>
+    <h3>Aucune demande trouvée</h3>
+    <p *ngIf="demandes.length > 0">Essayez de réinitialiser les filtres.</p>
+    <button class="btn-reset" *ngIf="demandes.length > 0" (click)="resetFilters()">
+      Réinitialiser les filtres
+    </button>
+  </div>
+
+  <!-- Liste -->
+  <div *ngIf="!loading && !error && filteredDemandes.length > 0" class="demandes-list">
+    <div class="demande-card" *ngFor="let demande of filteredDemandes">
+      <div class="demande-header">
+        <div class="demande-id">#{{ demande.id }}</div>
+        <div class="demande-date">{{ formatDate(demande.dateCreation) }}</div>
+      </div>
+      
+
+      <div class="demande-body">
+        <!-- ✅ Nom de l'employé visible pour admin -->
+        <div class="demande-employe">
+         <td class="user-cell">
+
+            <div class="user-avatar">
+              {{ (demande.utilisateurNom || 'U').charAt(0) }}
+            </div>
+
+            <div class="user-info">
+            </div>
+          </td>
+          <strong>{{ demande.utilisateurNom || 'Employé inconnu' }}</strong>
+        </div>
+        <div class="demande-motif">
+          <strong>Motif :</strong> {{ demande.motif }}
+        </div>
+        <div class="demande-dates">
+          <span>📅 {{ formatDate(demande.dateDebut) }} → {{ formatDate(demande.dateFin) }}</span>
+          <span class="demande-type">{{ getTypeLabel(demande.type) }}</span>
+        </div>
+      </div>
+
+      <div class="demande-footer">
+        <div class="demande-status">
+          <span class="status-badge" [class]="getStatusClass(demande.statut)">
+            {{ getStatusLabel(demande.statut) }}
+          </span>
+        </div>
+        <button class="btn-detail" (click)="voirDetail(demande)">Voir le détail</button>
+      </div>
+    </div>
+  </div>
+</div>

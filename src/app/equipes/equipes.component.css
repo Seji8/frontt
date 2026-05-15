@@ -1,0 +1,301 @@
+/* ============================================================
+   equipes.component.css
+   ============================================================ */
+
+.equipes-container {
+  padding: 24px;
+  max-width: 1280px;
+}
+
+/* ── Page title ── */
+.equipes-container > h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+/* ── Alerts ── */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.alert-error {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 0.5px solid var(--red);
+}
+
+.alert-success {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 0.5px solid var(--green);
+}
+
+/* ── Actions bar ── */
+.actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.btn:hover { opacity: 0.88; }
+.btn:active { transform: scale(0.98); }
+
+.btn-primary   { background: var(--indigo);     color: #fff; }
+.btn-success   { background: var(--green);      color: #fff; }
+.btn-warning   { background: var(--amber);      color: #fff; }
+.btn-danger    { background: var(--red);        color: #fff; }
+
+.btn-small {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Form card ── */
+.form-container {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.form-container h3 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.form-control {
+  height: 38px;
+  padding: 0 12px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--bg-muted);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-control:focus {
+  border-color: var(--indigo);
+  background: var(--bg-surface);
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ── Table container ── */
+.table-container {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* ── Equipes table ── */
+.equipes-table,
+.team-members-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.equipes-table thead,
+.team-members-table thead {
+  background: var(--bg-muted);
+}
+
+.equipes-table thead th,
+.team-members-table thead th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border-bottom: 0.5px solid var(--border-soft);
+}
+
+.equipes-table tbody tr,
+.team-members-table tbody tr {
+  border-bottom: 0.5px solid var(--border-soft);
+  transition: background 0.12s;
+}
+
+.equipes-table tbody tr:last-child,
+.team-members-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.equipes-table tbody tr:hover,
+.team-members-table tbody tr:hover {
+  background: var(--bg-muted);
+}
+
+.equipes-table tbody td,
+.team-members-table tbody td {
+  padding: 12px 16px;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.equipes-table tbody td:first-child {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ── Chef badge ── */
+.chef-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--indigo-dim);
+  color: var(--indigo);
+}
+
+.chef-badge.no-chef {
+  background: var(--bg-muted);
+  color: var(--text-muted);
+}
+
+/* ── Row action buttons ── */
+.equipes-table .btn-small + .btn-small {
+  margin-left: 6px;
+}
+
+/* ── Team Leader view ── */
+.team-detail {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.team-header {
+  background: var(--navy);
+  padding: 18px 24px;
+}
+
+.team-header h2 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
+}
+
+.team-header p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Me badge ── */
+.me-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--indigo-dim);
+  color: var(--indigo);
+}
+
+/* ── Role badges ── */
+.role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.role-ADMIN       { background: var(--red-bg);    color: var(--red); }
+.role-RH          { background: var(--amber-bg);  color: var(--amber); }
+.role-CHEF_EQUIPE { background: var(--indigo-dim); color: var(--indigo); }
+.role-EMPLOYE     { background: var(--green-bg);  color: var(--green); }
+
+/* ── Team stats footer ── */
+.team-stats {
+  padding: 12px 16px;
+  border-top: 0.5px solid var(--border-soft);
+  background: var(--bg-muted);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.team-stats strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .equipes-container { padding: 16px; }
+
+  .equipes-table thead th:nth-child(1),
+  .equipes-table tbody td:nth-child(1) { display: none; }
+
+  .team-members-table thead th:nth-child(4),
+  .team-members-table thead th:nth-child(5),
+  .team-members-table tbody td:nth-child(4),
+  .team-members-table tbody td:nth-child(5) { display: none; }
+}
+
+@media (max-width: 480px) {
+  .form-actions { flex-direction: column; }
+  .btn { width: 100%; justify-content: center; }
+}

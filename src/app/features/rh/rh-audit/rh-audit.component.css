@@ -1,0 +1,388 @@
+/* =========================
+   AUDIT PAGE MODERNE (BIG TEXT VERSION)
+========================= */
+
+.audit-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: auto;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
+  background: #f8fafc;
+
+  /* 👇 léger boost global */
+  font-size: 15px;
+}
+
+/* ================= HERO ================= */
+
+.hero-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.hero-left h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  color: #0f172a;
+}
+
+.hero-text {
+  margin-top: 8px;
+  font-size: 15px;
+  color: #64748b;
+  max-width: 500px;
+}
+
+/* ================= BUTTON ================= */
+
+.btn-export {
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-export:hover {
+  transform: translateY(-2px);
+}
+
+.btn-export:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ================= STATS ================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  padding: 18px;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  transition: 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.stat-icon {
+  font-size: 22px;
+}
+
+.stat-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.stat-desc {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Colors */
+.stat-card.total .stat-value { color: #0f172a; }
+.stat-card.create .stat-value { color: #16a34a; }
+.stat-card.update .stat-value { color: #2563eb; }
+.stat-card.delete .stat-value { color: #dc2626; }
+
+/* ================= FILTERS ================= */
+
+.filters-wrapper {
+  background: white;
+  padding: 20px;
+  border-radius: 18px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+.filters-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.filters-header p {
+  margin: 4px 0 16px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  align-items: end;
+}
+
+.filter-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-box label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+.filter-control {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.filter-control:focus {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+/* search bigger */
+.search-box {
+  grid-column: span 2;
+}
+
+/* reset */
+.btn-reset {
+  border: none;
+  background: #f1f5f9;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-reset:hover {
+  background: #e2e8f0;
+}
+
+/* ================= STATES ================= */
+
+.state-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.state-card.error {
+  border-left: 4px solid #dc2626;
+  color: #dc2626;
+}
+
+/* spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= TABLE ================= */
+
+.table-wrapper {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.audit-table thead {
+  background: #f8fafc;
+}
+
+.audit-table th {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #475569;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.audit-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 14px;
+}
+
+.audit-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* ================= USER ================= */
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* ================= BADGES ================= */
+
+.action-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.action-create {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.action-update {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.action-delete {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.action-other {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* ================= EMPTY ================= */
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #64748b;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search-box {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search-box {
+    grid-column: span 1;
+  }
+}

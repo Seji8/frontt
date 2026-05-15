@@ -1,0 +1,281 @@
+.admin-tasks-container {
+  padding: 28px;
+  max-width: 1300px;
+  margin: auto;
+  font-family: 'Inter', sans-serif;
+  background: #f6f7fb;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 22px;
+  border-radius: 18px;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.hero-badge {
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.hero-left h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.hero-left p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.badge-count {
+  background: linear-gradient(135deg,#4f46e5,#3b82f6);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* ================= STATES ================= */
+
+.state-box {
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.state-box.error {
+  border-left: 4px solid #ef4444;
+  color: #ef4444;
+}
+
+.empty-box {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+}
+
+.empty-icon {
+  font-size: 40px;
+}
+
+/* spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ddd;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ================= GRID ================= */
+
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 18px;
+}
+
+/* ================= CARD ================= */
+
+.task-card {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  transition: 0.25s;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}
+
+.task-card:hover {
+  transform: translateY(-5px);
+}
+
+/* HEADER */
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f8fafc;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* BODY */
+.task-body {
+  padding: 16px;
+}
+
+.task-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.task-info {
+  font-size: 13px;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mono {
+  font-family: monospace;
+}
+
+/* ================= SCORE ================= */
+
+.score-block {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.score-top {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+.process-clean {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+}
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.score-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.score-low { background:#dcfce7; color:#16a34a; }
+.score-medium { background:#fef9c3; color:#ca8a04; }
+.score-high { background:#fee2e2; color:#dc2626; }
+
+.score-meta {
+  font-size: 12px;
+}
+
+.score-small {
+  color: #64748b;
+}
+
+/* BAR */
+.bar {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  margin-top: 8px;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.fill-low { background:#16a34a; }
+.fill-medium { background:#ca8a04; }
+.fill-high { background:#dc2626; }
+
+/* ================= FOOTER ================= */
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px;
+  background: #f8fafc;
+}
+
+.btn-outline {
+  border: 1px solid #ddd;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-approve {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-reject {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .tasks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .btn-approve, .btn-reject {
+    flex: 1;
+  }
+}

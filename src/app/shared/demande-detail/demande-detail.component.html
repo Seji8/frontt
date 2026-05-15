@@ -1,0 +1,209 @@
+<div class="detail-container">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <button class="back-btn" (click)="goBack()">
+      <span class="back-arrow">←</span> Retour
+    </button>
+
+    <div class="title">
+      <h2>Détail de la demande</h2>
+    </div>
+
+    <div class="actions">
+      <button
+        *ngIf="demande?.statut === 'PENDING' && isEmploye()"
+        class="cancel-btn"
+        (click)="cancelDemande()"
+        [disabled]="isCancelling">
+        <span *ngIf="!isCancelling">🗑 Annuler</span>
+        <span *ngIf="isCancelling">...</span>
+      </button>
+      <div *ngIf="!demande || demande.statut !== 'PENDING' || !isEmploye()" style="width: 110px;"></div>
+    </div>
+
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="state-card">
+    <div class="spinner"></div>
+    <span>Chargement en cours…</span>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="error" class="state-card error">
+    <span class="error-icon">⚠</span>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- CONTENT -->
+  <div *ngIf="!loading && demande" class="content-wrapper">
+
+    <!-- USER CARD -->
+    <div class="user-card">
+      <div class="user-card-bg"></div>
+      <div class="avatar">{{ demande.utilisateurNom?.charAt(0)?.toUpperCase() }}</div>
+      <div class="user-info">
+        <h3>{{ demande.utilisateurNom }}</h3>
+        <p>{{ demande.utilisateurEmail }}</p>
+      </div>
+      <span class="badge" [ngClass]="getStatusClass(demande.statut)">
+        {{ getStatusLabel(demande.statut) }}
+      </span>
+    </div>
+
+    <!-- TWO COLUMNS -->
+    <div class="two-col">
+
+      <!-- INFO GRID -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-icon">📌</span>
+          Informations
+        </div>
+        <div class="info-grid">
+          <div class="field">
+            <div class="field-label">Motif</div>
+            <div class="field-value">{{ demande.motif }}</div>
+          </div>
+          <div class="field">
+            <div class="field-label">Type</div>
+            <div class="field-value">{{ getTypeLabel(demande.type) }}</div>
+          </div>
+          <div class="field">
+            <div class="field-label">Date début</div>
+            <div class="field-value">{{ demande.dateDebut | date:'dd MMM yyyy' }}</div>
+          </div>
+          <div class="field">
+            <div class="field-label">Date fin</div>
+            <div class="field-value">{{ demande.dateFin | date:'dd MMM yyyy' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DURATION CARD -->
+      <div class="duration-card">
+        <div class="duration-label">Durée</div>
+        <div class="duration-days">{{ getDurationDays() }}</div>
+        <div class="duration-sub">{{ getDurationDays() === 1 ? 'jour de télétravail' : 'jours de congé' }}</div>
+        <div class="duration-range">
+          <span>{{ demande.dateDebut | date:'dd MMM' }}</span>
+          <span class="range-arrow">→</span>
+          <span>{{ demande.dateFin | date:'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FILE CARD -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-icon">📎</span>
+        Justificatif
+      </div>
+
+      <!-- Fichier existant -->
+      <div *ngIf="demande.fichierjustificatif" class="file-row">
+        <span class="file-icon">📄</span>
+        <span class="file-name">{{ getFileName(demande.fichierjustificatif) }}</span>
+        <button class="dl-btn" (click)="downloadFile()">
+          ↓ Télécharger
+        </button>
+      </div>
+
+      <!-- Pas de fichier, employé peut uploader -->
+      <div *ngIf="!demande.fichierjustificatif && demande.statut === 'PENDING' && isEmploye()"
+           class="upload-zone">
+
+        <input type="file" #fileInput (change)="onFileSelected($event)" hidden>
+
+        <div *ngIf="!selectedFile" class="upload-area" (click)="fileInput.click()">
+          <span class="upload-icon">☁</span>
+          <p>Glissez votre fichier ici<br>ou <strong>cliquez pour sélectionner</strong></p>
+          <span class="upload-hint">PDF, JPG, PNG — max 10 Mo</span>
+        </div>
+
+        <div *ngIf="selectedFile" class="selected-file">
+          <span class="file-icon">📄</span>
+          <span class="file-name">{{ selectedFile.name }}</span>
+          <div class="upload-actions">
+            <button class="send-btn" (click)="uploadFile()" [disabled]="isUploading">
+              {{ isUploading ? 'Envoi en cours…' : 'Envoyer' }}
+            </button>
+            <button class="ghost-btn" (click)="selectedFile = null">Annuler</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pas de fichier, lecture seule -->
+      <div *ngIf="!demande.fichierjustificatif && !(demande.statut === 'PENDING' && isEmploye())"
+           class="no-file">
+        Aucun justificatif fourni
+      </div>
+
+    </div>
+
+    <!-- ✅ MOTIF DE REJET — visible uniquement par l'employé si la demande est refusée -->
+    <div *ngIf="isEmploye() && demande?.statut === 'REJECTED' && employeRejectReason" class="card reject-box">
+      <div class="card-head">
+        <span class="card-icon">❌</span>
+        Demande refusée
+      </div>
+      <p class="label">Motif du rejet :</p>
+      <p class="reason">{{ employeRejectReason }}</p>
+    </div>
+
+    <!-- ✅ MESSAGE si refusé mais aucun motif fourni -->
+    <div *ngIf="isEmploye() && demande?.statut === 'REJECTED' && !employeRejectReason" class="card reject-box">
+      <div class="card-head">
+        <span class="card-icon">❌</span>
+        Demande refusée
+      </div>
+      <p class="reason no-file">Aucun motif de rejet fourni.</p>
+    </div>
+
+    <!-- SECTION ADMIN / CHEF : approuver ou rejeter -->
+    <div *ngIf="(isAdminView || isChefView) && selectedTask" class="card">
+
+      <div class="card-head">
+        <span class="card-icon">⚙️</span>
+        Action
+      </div>
+
+      <div class="reject-reason">
+        <label for="rejectReason">
+          Motif du rejet <span class="required">*</span>
+        </label>
+        <textarea
+          id="rejectReason"
+          [(ngModel)]="rejectReason"
+          placeholder="Saisissez le motif du rejet..."
+          rows="3">
+        </textarea>
+        <span class="field-hint" *ngIf="!rejectReason.trim()">
+          Requis pour pouvoir rejeter la demande.
+        </span>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          class="btn-approve"
+          (click)="approveTask()"
+          [disabled]="!selectedTask">
+          Approuver
+        </button>
+        <button
+          class="btn-reject"
+          (click)="rejectTaskWithReason()"
+          [disabled]="!rejectReason.trim() || !selectedTask">
+          Rejeter avec motif
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
