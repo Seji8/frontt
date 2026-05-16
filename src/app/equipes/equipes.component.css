@@ -1,150 +1,229 @@
-/* ============================================================
-   equipes.component.css
-   ============================================================ */
+/* ══════════════════════════════════════
+   VARIABLES
+══════════════════════════════════════ */
+:root {
+  --navy:        #1a2340;
+  --navy-light:  #1e2d4d;
+  --navy-active: #2a3f6f;
+  --indigo:      #4f6ef7;
+  --indigo-dim:  #eef0fe;
+  --green:       #3B6D11;
+  --green-bg:    #EAF3DE;
+  --amber:       #854F0B;
+  --amber-bg:    #FAEEDA;
+  --red:         #A32D2D;
+  --red-bg:      #FCEBEB;
+  --bg-surface:  #ffffff;
+  --bg-muted:    #f5f7fc;
+  --border:      rgba(0,0,0,0.12);
+  --border-soft: rgba(0,0,0,0.07);
+  --text-primary:#1a2340;
+  --text-muted:  #7b8eb0;
+  --radius-sm:   8px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --font-display: system-ui, sans-serif;
+}
 
+/* ══════════════════════════════════════
+   CONTAINER
+══════════════════════════════════════ */
 .equipes-container {
-  padding: 24px;
+  padding: 32px 28px;
   max-width: 1280px;
 }
 
-/* ── Page title ── */
 .equipes-container > h1 {
   font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
   color: var(--navy);
-  letter-spacing: -0.02em;
-  margin-bottom: 20px;
+  letter-spacing: -0.03em;
+  margin-bottom: 24px;
 }
 
-/* ── Alerts ── */
+/* ══════════════════════════════════════
+   ALERTS
+══════════════════════════════════════ */
 .alert {
-  padding: 12px 16px;
+  padding: 13px 18px;
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .alert-error {
   background: var(--red-bg);
   color: var(--red);
-  border: 0.5px solid var(--red);
+  border: 0.5px solid rgba(163, 45, 45, 0.3);
 }
 
 .alert-success {
   background: var(--green-bg);
   color: var(--green);
-  border: 0.5px solid var(--green);
+  border: 0.5px solid rgba(59, 109, 17, 0.3);
 }
 
-/* ── Actions bar ── */
+/* ══════════════════════════════════════
+   ACTIONS BAR
+══════════════════════════════════════ */
 .actions-bar {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
-/* ── Buttons ── */
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 7px;
+  padding: 9px 18px;
   border-radius: var(--radius-sm);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   border: none;
   cursor: pointer;
-  transition: opacity 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.01em;
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
 }
 
-.btn:hover { opacity: 0.88; }
-.btn:active { transform: scale(0.98); }
+.btn:hover {
+  opacity: 0.88;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
 
-.btn-primary   { background: var(--indigo);     color: #fff; }
-.btn-success   { background: var(--green);      color: #fff; }
-.btn-warning   { background: var(--amber);      color: #fff; }
-.btn-danger    { background: var(--red);        color: #fff; }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(26,35,64,0.18);
+}
+
+.btn-success {
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(59,109,17,0.2);
+}
+
+.btn-warning {
+  background: #f5f5f5;
+  color: var(--text-primary);
+  border: 0.5px solid var(--border);
+}
+
+.btn-danger {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 0.5px solid rgba(163,45,45,0.25);
+}
+
+.btn-danger:hover {
+  background: var(--red);
+  color: #fff;
+}
 
 .btn-small {
-  padding: 5px 10px;
+  padding: 6px 12px;
   font-size: 12px;
   border-radius: var(--radius-sm);
 }
 
-/* ── Form card ── */
+/* ══════════════════════════════════════
+   FORM CARD
+══════════════════════════════════════ */
 .form-container {
   background: var(--bg-surface);
   border: 0.5px solid var(--border-soft);
   border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  margin-bottom: 20px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(26,35,64,0.06);
 }
 
 .form-container h3 {
   font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   color: var(--navy);
-  margin-bottom: 18px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 0.5px solid var(--border-soft);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 7px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
 .form-control {
-  height: 38px;
-  padding: 0 12px;
+  height: 42px;
+  padding: 0 14px;
   border: 0.5px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-primary);
   background: var(--bg-muted);
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 
 .form-control:focus {
   border-color: var(--indigo);
   background: var(--bg-surface);
+  box-shadow: 0 0 0 3px rgba(79,110,247,0.1);
 }
+
+select.form-control { cursor: pointer; }
 
 .form-actions {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 0.5px solid var(--border-soft);
 }
 
-/* ── Table container ── */
+/* ══════════════════════════════════════
+   TABLE CONTAINER
+══════════════════════════════════════ */
 .table-container {
   background: var(--bg-surface);
   border: 0.5px solid var(--border-soft);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: 0 2px 12px rgba(26,35,64,0.06);
 }
 
-/* ── Equipes table ── */
+/* ══════════════════════════════════════
+   TABLES
+══════════════════════════════════════ */
 .equipes-table,
 .team-members-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: 14px;          /* +1px vs avant */
 }
 
+/* ── HEAD ── */
 .equipes-table thead,
 .team-members-table thead {
   background: var(--bg-muted);
@@ -152,16 +231,18 @@
 
 .equipes-table thead th,
 .team-members-table thead th {
-  padding: 10px 16px;
+  padding: 13px 20px;       /* plus d'air */
   text-align: left;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   color: var(--text-muted);
   border-bottom: 0.5px solid var(--border-soft);
+  white-space: nowrap;
 }
 
+/* ── BODY rows ── */
 .equipes-table tbody tr,
 .team-members-table tbody tr {
   border-bottom: 0.5px solid var(--border-soft);
@@ -175,114 +256,205 @@
 
 .equipes-table tbody tr:hover,
 .team-members-table tbody tr:hover {
-  background: var(--bg-muted);
+  background: #f0f4ff;
 }
 
 .equipes-table tbody td,
 .team-members-table tbody td {
-  padding: 12px 16px;
+  padding: 15px 20px;       /* cellules plus hautes */
   color: var(--text-primary);
   vertical-align: middle;
+  font-size: 14px;
 }
 
+/* ID column */
 .equipes-table tbody td:first-child {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
-/* ── Chef badge ── */
+/* Name column bold */
+.equipes-table tbody td:nth-child(2) strong,
+.team-members-table tbody td:first-child strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* Email / secondary columns */
+.team-members-table tbody td:nth-child(2) {
+  color: var(--indigo);
+  font-size: 13px;
+}
+
+/* Matricule / phone / city */
+.team-members-table tbody td:nth-child(3),
+.team-members-table tbody td:nth-child(4),
+.team-members-table tbody td:nth-child(5) {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Actions column ── */
+.equipes-table td:last-child {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ══════════════════════════════════════
+   CHEF BADGE
+══════════════════════════════════════ */
 .chef-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   background: var(--indigo-dim);
   color: var(--indigo);
+  border: 0.5px solid rgba(79,110,247,0.2);
 }
 
 .chef-badge.no-chef {
   background: var(--bg-muted);
   color: var(--text-muted);
+  border-color: var(--border-soft);
 }
 
-/* ── Row action buttons ── */
-.equipes-table .btn-small + .btn-small {
-  margin-left: 6px;
-}
-
-/* ── Team Leader view ── */
+/* ══════════════════════════════════════
+   TEAM DETAIL (Chef view)
+══════════════════════════════════════ */
 .team-detail {
   background: var(--bg-surface);
   border: 0.5px solid var(--border-soft);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: 0 2px 12px rgba(26,35,64,0.06);
 }
 
 .team-header {
   background: var(--navy);
-  padding: 18px 24px;
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .team-header h2 {
   font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
   color: #fff;
   letter-spacing: -0.02em;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .team-header p {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+  color: rgba(255,255,255,0.42);
 }
 
-/* ── Me badge ── */
+/* Member count pill in header */
+.team-header::after {
+  content: attr(data-count);
+  display: none; /* activez via JS si besoin */
+}
+
+/* ══════════════════════════════════════
+   ME BADGE
+══════════════════════════════════════ */
 .me-badge {
   display: inline-block;
-  margin-left: 6px;
-  padding: 1px 7px;
+  margin-left: 7px;
+  padding: 2px 8px;
   border-radius: 20px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   background: var(--indigo-dim);
   color: var(--indigo);
+  border: 0.5px solid rgba(79,110,247,0.25);
+  vertical-align: middle;
 }
 
-/* ── Role badges ── */
+/* ══════════════════════════════════════
+   ROLE BADGES
+══════════════════════════════════════ */
 .role-badge {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
 }
 
-.role-ADMIN       { background: var(--red-bg);    color: var(--red); }
-.role-RH          { background: var(--amber-bg);  color: var(--amber); }
-.role-CHEF_EQUIPE { background: var(--indigo-dim); color: var(--indigo); }
-.role-EMPLOYE     { background: var(--green-bg);  color: var(--green); }
+.role-ADMIN {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 0.5px solid rgba(163,45,45,0.25);
+}
 
-/* ── Team stats footer ── */
+.role-RH {
+  background: var(--amber-bg);
+  color: var(--amber);
+  border: 0.5px solid rgba(133,79,11,0.25);
+}
+
+.role-CHEF_EQUIPE {
+  background: var(--indigo-dim);
+  color: var(--indigo);
+  border: 0.5px solid rgba(79,110,247,0.25);
+}
+
+.role-EMPLOYE {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 0.5px solid rgba(59,109,17,0.25);
+}
+
+/* ══════════════════════════════════════
+   TEAM STATS FOOTER
+══════════════════════════════════════ */
 .team-stats {
-  padding: 12px 16px;
+  padding: 14px 20px;
   border-top: 0.5px solid var(--border-soft);
   background: var(--bg-muted);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .team-stats strong {
   color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 14px;
 }
 
-/* ── Responsive ── */
+/* ══════════════════════════════════════
+   EMPTY STATE (optionnel)
+══════════════════════════════════════ */
+.equipes-table tbody:empty::after,
+.team-members-table tbody:empty::after {
+  content: 'Aucune donnée disponible';
+  display: block;
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
 @media (max-width: 768px) {
   .equipes-container { padding: 16px; }
 
@@ -293,9 +465,16 @@
   .team-members-table thead th:nth-child(5),
   .team-members-table tbody td:nth-child(4),
   .team-members-table tbody td:nth-child(5) { display: none; }
+
+  .equipes-table tbody td:last-child {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 480px) {
   .form-actions { flex-direction: column; }
   .btn { width: 100%; justify-content: center; }
+
+  .equipes-table thead th:nth-child(3),
+  .equipes-table tbody td:nth-child(3) { display: none; }
 }

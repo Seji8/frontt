@@ -65,7 +65,7 @@
 
       </div>
       <!-- SCORE -->
-<div class="score-block" *ngIf="getScore(task.demandeId); let score">
+<div class="score-block" *ngIf="task.demandeId && scores[task.demandeId] as score">
 
   <div class="score-top">
     <span>📊 Score de disponibilité de l’équipe</span>
@@ -74,13 +74,13 @@
   <div class="score-row">
 
     <div class="score-circle" [ngClass]="'score-' + score.niveau">
-      {{ score.score }}%
+      {{ getScore(task.demandeId)?.score }}
     </div>
 
     <div class="score-meta">
       <div class="score-label">{{ score.label }}</div>
       <div class="score-small">
-        {{ score.demandesEnChevauchement }} / {{ score.tailleEquipe }} en télétravail
+        {{ score.demandesEnChevauchement }} / {{ score.tailleEquipe }}
       </div>
     </div>
 
@@ -93,9 +93,7 @@
   </div>
 
 </div>
-
-<div class="score-loading"
-     *ngIf="getScore(task.demandeId) === null && task.demandeId">
+<div class="score-loading" *ngIf="task.demandeId && !scores?.[task.demandeId]">
   ⏳ Calcul du score...
 </div>
 
@@ -106,7 +104,7 @@
           👁 Détails
         </button>
 
-        <div class="actions">
+    
 
           <div class="actions">
           <button class="btn-approve" (click)="approveTask(task)">

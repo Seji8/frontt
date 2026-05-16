@@ -13,7 +13,7 @@ import { ToutesDemandesComponent } from './features/admin/toutes-demandes/toutes
 import { RhComponent } from './features/rh/rh.component';
 import { RhAuditComponent } from './features/rh/rh-audit/rh-audit.component';
 import { MonProfilComponent } from './features/employe/profil/profil/profil.component';
-
+import { PolitiqueTeletravailComponent } from './features/politique-teletravail/politique-teletravail.component';
 export const routes: Routes = [
   // Public
   { path: 'login', component: LoginComponent },
@@ -27,7 +27,10 @@ export const routes: Routes = [
   { path: 'mes-demandes', component: MesDemandesComponent, canActivate: [AuthGuard] },
   { path: 'nouvelle-demande', component: NouvelleDemandeComponent, canActivate: [AuthGuard] },
   { path: 'profil', component: MonProfilComponent, canActivate: [AuthGuard] },
-
+  {
+  path: 'politique-teletravail',
+  component: PolitiqueTeletravailComponent
+},
   // Chef
   { path: 'chef/tasks', component: ChefTasksComponent, canActivate: [AuthGuard] },
   // ✅ Fix — was missing, caused redirect to login
