@@ -1,0 +1,180 @@
+<div class="detail-container">
+
+  <!-- HEADER -->
+  <div class="dd-header">
+    <button class="dd-back-btn" (click)="goBack()">
+      <span>←</span> Retour
+    </button>
+    <h2 class="dd-title">Détail de la demande <span class="dd-id">#{{ demande?.id }}</span></h2>
+    <div class="dd-header-right"><!-- spacer --></div>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="dd-state">
+    <div class="dd-spinner"></div>
+    <span>Chargement en cours…</span>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="error && !loading" class="dd-alert dd-alert--error">
+    <span>⚠</span> {{ error }}
+  </div>
+
+  <!-- CANCEL SUCCESS -->
+  <div *ngIf="cancelSuccess" class="dd-alert dd-alert--success">
+    <span>✅</span> Demande annulée avec succès. Redirection…
+  </div>
+
+  <!-- CONTENT -->
+  <div *ngIf="!loading && demande" class="dd-content">
+
+    <!-- USER CARD -->
+    <div class="dd-user-card">
+      <div class="dd-avatar">{{ demande.utilisateurNom?.charAt(0)?.toUpperCase() }}</div>
+      <div class="dd-user-info">
+        <h3>{{ demande.utilisateurNom }}</h3>
+        <p>{{ demande.utilisateurEmail }}</p>
+      </div>
+      <span class="dd-badge" [ngClass]="getStatusClass(demande.statut)">
+        {{ getStatusLabel(demande.statut) }}
+      </span>
+    </div>
+
+    <!-- INFO + DURATION -->
+    <div class="dd-row">
+
+      <div class="dd-card dd-info-card">
+        <div class="dd-card-head"><span>📌</span> Informations</div>
+        <div class="dd-fields">
+          <div class="dd-field">
+            <div class="dd-field-label">Motif</div>
+            <div class="dd-field-value">{{ demande.motif }}</div>
+          </div>
+          <div class="dd-field">
+            <div class="dd-field-label">Type</div>
+            <div class="dd-field-value">{{ getTypeLabel(demande.type) }}</div>
+          </div>
+          <div class="dd-field">
+            <div class="dd-field-label">Date début</div>
+            <div class="dd-field-value">{{ demande.dateDebut | date:'dd MMM yyyy' }}</div>
+          </div>
+          <div class="dd-field">
+            <div class="dd-field-label">Date fin</div>
+            <div class="dd-field-value">{{ demande.dateFin | date:'dd MMM yyyy' }}</div>
+          </div>
+          <div class="dd-field">
+            <div class="dd-field-label">Créée le</div>
+            <div class="dd-field-value">{{ demande.dateCreation | date:'dd MMM yyyy' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-duration-card">
+        <div class="dd-dur-number">{{ getDurationDays() }}</div>
+        <div class="dd-dur-label">{{ getDurationDays() === 1 ? 'jour' : 'jours' }}</div>
+        <div class="dd-dur-sub">de télétravail</div>
+        <div class="dd-dur-range">
+          <span>{{ demande.dateDebut | date:'dd MMM' }}</span>
+          <span class="dd-arrow">→</span>
+          <span>{{ demande.dateFin | date:'dd MMM yyyy' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ★ CANCEL BUTTON — employee only, PENDING only -->
+    <div *ngIf="canCancel()" class="dd-card dd-cancel-card">
+      <div class="dd-card-head"><span>🗑️</span> Annuler la demande</div>
+      <p class="dd-cancel-hint">
+        Votre demande est encore en attente de traitement. Vous pouvez l'annuler tant qu'elle n'a pas été traitée.
+      </p>
+      <button
+        class="dd-cancel-btn"
+        (click)="cancelDemande()"
+        [disabled]="isCancelling">
+        <span *ngIf="!isCancelling">🗑️ Annuler cette demande</span>
+        <span *ngIf="isCancelling" class="dd-spinner-sm"></span>
+      </button>
+    </div>
+
+    <!-- ALREADY CANCELLED -->
+    <div *ngIf="demande.statut === 'CANCELLED'" class="dd-card dd-cancelled-card">
+      <div class="dd-card-head"><span>🚫</span> Demande annulée</div>
+      <p>Cette demande a été annulée et ne peut plus être modifiée.</p>
+    </div>
+
+    <!-- JUSTIFICATIF -->
+    <div class="dd-card">
+      <div class="dd-card-head"><span>📎</span> Justificatif</div>
+
+      <div *ngIf="demande.fichierjustificatif" class="dd-file-row">
+        <span>📄</span>
+        <span class="dd-file-name">{{ getFileName(demande.fichierjustificatif) }}</span>
+        <button class="dd-dl-btn" (click)="downloadFile()">↓ Télécharger</button>
+      </div>
+
+      <div *ngIf="!demande.fichierjustificatif && demande.statut === 'PENDING' && isEmploye()"
+           class="dd-upload-zone">
+        <input type="file" #fileInput (change)="onFileSelected($event)" hidden>
+
+        <div *ngIf="!selectedFile" class="dd-upload-area" (click)="fileInput.click()">
+          <span class="dd-upload-icon">☁</span>
+          <p>Glissez votre fichier ici ou <strong>cliquez pour sélectionner</strong></p>
+          <small>PDF, JPG, PNG — max 10 Mo</small>
+        </div>
+
+        <div *ngIf="selectedFile" class="dd-selected-file">
+          <span>📄</span>
+          <span class="dd-file-name">{{ selectedFile.name }}</span>
+          <div class="dd-upload-actions">
+            <button class="dd-send-btn" (click)="uploadFile()" [disabled]="isUploading">
+              {{ isUploading ? 'Envoi…' : 'Envoyer' }}
+            </button>
+            <button class="dd-ghost-btn" (click)="selectedFile = null">Annuler</button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!demande.fichierjustificatif && !(demande.statut === 'PENDING' && isEmploye())"
+           class="dd-no-file">
+        Aucun justificatif fourni
+      </div>
+    </div>
+
+    <!-- REJECT REASON (employee view) -->
+    <div *ngIf="isEmploye() && demande?.statut === 'REJECTED'" class="dd-card dd-reject-card">
+      <div class="dd-card-head"><span>❌</span> Demande refusée</div>
+      <p *ngIf="employeRejectReason" class="dd-reject-reason">{{ employeRejectReason }}</p>
+      <p *ngIf="!employeRejectReason" class="dd-no-file">Aucun motif de rejet fourni.</p>
+    </div>
+
+    <!-- ADMIN / CHEF ACTION -->
+    <div *ngIf="(isAdminView || isChefView) && selectedTask" class="dd-card dd-action-card">
+      <div class="dd-card-head"><span>⚙️</span> Action</div>
+
+      <div class="dd-reject-input">
+        <label for="rejectReason">Motif du rejet <span class="dd-required">*</span></label>
+        <textarea
+          id="rejectReason"
+          [(ngModel)]="rejectReason"
+          placeholder="Saisissez le motif du rejet..."
+          rows="3">
+        </textarea>
+        <small *ngIf="!rejectReason.trim()" class="dd-hint">Requis pour rejeter la demande.</small>
+      </div>
+
+      <div class="dd-action-btns">
+        <button class="dd-btn-approve" (click)="approveTask()" [disabled]="!selectedTask">
+          ✅ Approuver
+        </button>
+        <button
+          class="dd-btn-reject"
+          (click)="rejectTaskWithReason()"
+          [disabled]="!rejectReason.trim() || !selectedTask">
+          ❌ Rejeter
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

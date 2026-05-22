@@ -1,0 +1,276 @@
+<div class="audit-container">
+
+  <!-- ================= HERO HEADER ================= -->
+  <div class="hero-section">
+
+    <div class="hero-left">
+      <div class="hero-badge">
+        🔍 Audit & Monitoring
+      </div>
+
+      <h1>
+        Journal d’Audit RH
+      </h1>
+
+      <p class="hero-text">
+        Consultez toutes les actions effectuées sur les demandes,
+        validations et utilisateurs en temps réel.
+      </p>
+    </div>
+
+    <div class="hero-right">
+      <button
+        class="btn-export"
+        (click)="exportCSV()"
+        [disabled]="filteredLogs.length === 0">
+
+        ⬇ Exporter CSV
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ================= STATS ================= -->
+  <div class="stats-grid">
+
+    <div class="stat-card total">
+      <div class="stat-top">
+        <div class="stat-icon">📋</div>
+        <div class="stat-title">Total Logs</div>
+      </div>
+
+      <div class="stat-value">
+        {{ totalLogs }}
+      </div>
+
+      <div class="stat-desc">
+        Toutes les activités enregistrées
+      </div>
+    </div>
+
+    <div class="stat-card create">
+      <div class="stat-top">
+        <div class="stat-icon">📝</div>
+        <div class="stat-title">Demandes</div>
+      </div>
+
+      <div class="stat-value">
+        {{ createDemandeCount }}
+      </div>
+
+      <div class="stat-desc">
+        Demandes créées
+      </div>
+    </div>
+
+    <div class="stat-card update">
+      <div class="stat-top">
+        <div class="stat-icon">✅</div>
+        <div class="stat-title">Approuvées</div>
+      </div>
+
+      <div class="stat-value">
+        {{ approveCount }}
+      </div>
+
+      <div class="stat-desc">
+        Actions validées
+      </div>
+    </div>
+
+    <div class="stat-card delete">
+      <div class="stat-top">
+        <div class="stat-icon">❌</div>
+        <div class="stat-title">Refusées</div>
+      </div>
+
+      <div class="stat-value">
+        {{ rejectCount }}
+      </div>
+
+      <div class="stat-desc">
+        Actions rejetées
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= FILTERS ================= -->
+  <div class="filters-wrapper">
+
+    <div class="filters-header">
+      <h3>Filtres avancés</h3>
+      <p>Filtrer rapidement les événements et activités</p>
+    </div>
+
+    <div class="filters-grid">
+
+      <!-- Action -->
+      <div class="filter-box">
+        <label>Action</label>
+
+        <select
+          [(ngModel)]="selectedAction"
+          (change)="onFilterChange()"
+          class="filter-control">
+
+          <option
+            *ngFor="let a of actions"
+            [value]="a.value">
+
+            {{ a.label }}
+
+          </option>
+        </select>
+      </div>
+
+      <!-- Date from -->
+      <div class="filter-box">
+        <label>Du</label>
+
+        <input
+          type="date"
+          [(ngModel)]="fromDate"
+          (change)="onFilterChange()"
+          class="filter-control" />
+      </div>
+
+      <!-- Date to -->
+      <div class="filter-box">
+        <label>Au</label>
+
+        <input
+          type="date"
+          [(ngModel)]="toDate"
+          (change)="onFilterChange()"
+          class="filter-control" />
+      </div>
+
+      <!-- Search -->
+      <div class="filter-box search-box">
+        <label>Recherche</label>
+
+        <input
+          type="text"
+          [(ngModel)]="searchUser"
+          (input)="onSearchChange()"
+          placeholder="Nom, email ou détails..."
+          class="filter-control" />
+      </div>
+
+      <!-- Reset -->
+      <div class="filter-action">
+        <button
+          class="btn-reset"
+          (click)="resetFilters()">
+
+          ↺ Réinitialiser
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= STATES ================= -->
+
+  <div *ngIf="loading" class="state-card">
+    <div class="spinner"></div>
+    <span>Chargement des logs...</span>
+  </div>
+
+  <div *ngIf="error" class="state-card error">
+    ⚠️ {{ error }}
+  </div>
+
+  <!-- ================= TABLE ================= -->
+
+  <div *ngIf="!loading && !error" class="table-wrapper">
+
+    <!-- EMPTY -->
+    <div *ngIf="filteredLogs.length === 0" class="empty-state">
+
+      <div class="empty-icon">
+        🗂️
+      </div>
+
+      <h3>Aucun résultat trouvé</h3>
+
+      <p>
+        Aucun log ne correspond aux filtres sélectionnés.
+      </p>
+
+    </div>
+
+    <!-- TABLE -->
+    <table *ngIf="filteredLogs.length > 0" class="audit-table">
+
+      <thead>
+
+        <tr>
+          <th>Date</th>
+          <th>Action</th>
+          <th>Utilisateur</th>
+          <th>Email</th>
+          <th>Détails</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let log of filteredLogs">
+
+          <!-- DATE -->
+          <td class="date-cell">
+            {{ formatDate(log.date) }}
+          </td>
+
+          <!-- ACTION -->
+          <td>
+
+            <span
+              class="action-badge"
+              [ngClass]="getActionClass(log.action)">
+
+              {{ getActionLabel(log.action) }}
+
+            </span>
+
+          </td>
+
+          <!-- USER -->
+          <td class="user-cell">
+
+            <div class="user-avatar">
+              {{ (log.userName || 'U').charAt(0) }}
+            </div>
+
+            <div class="user-info">
+
+              <div class="user-name">
+                {{ log.userName || 'Utilisateur inconnu' }}
+              </div>
+
+            </div>
+
+          </td>
+
+          <!-- EMAIL -->
+          <td class="email-cell">
+            {{ log.userEmail || '—' }}
+          </td>
+
+          <!-- DETAILS -->
+          <td class="details-cell">
+            {{ log.details }}
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

@@ -1,0 +1,587 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:host { display: block; font-family: 'Inter', sans-serif; }
+
+/* ── Container ── */
+.detail-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  background: #f1f4f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Full-width children */
+.dd-header,
+.dd-state,
+.dd-alert,
+.dd-content,
+.dd-user-card,
+.dd-row,
+.dd-card,
+.dd-duration-card,
+.dd-cancel-card,
+.dd-cancelled-card,
+.dd-reject-card,
+.dd-action-card {
+  width: 100%;
+}
+
+/* ── Header ── */
+.dd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dd-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 110px;
+  font-family: inherit;
+}
+.dd-back-btn:hover {
+  color: #1e293b;
+  transform: translateX(-2px);
+  border-color: #cbd5e1;
+}
+
+.dd-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+.dd-id { color: #94a3b8; font-weight: 400; }
+.dd-header-right { min-width: 110px; }
+
+/* ── Alerts ── */
+.dd-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid;
+}
+.dd-alert--error   { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
+.dd-alert--success { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+
+/* ── State (loading) ── */
+.dd-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #475569;
+}
+
+/* ── Spinners ── */
+.dd-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+.dd-spinner-sm {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Content ── */
+.dd-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── User card ── */
+.dd-user-card {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.dd-user-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, #dbeafe 0%, transparent 55%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.dd-avatar {
+  position: relative;
+  z-index: 1;
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  border-radius: 50%;
+  background: #1e3a8a;
+  color: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.dd-user-info {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+.dd-user-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 3px;
+}
+.dd-user-info p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── Badges ── */
+.dd-badge {
+  position: relative;
+  z-index: 1;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-pending   { background: #fef3c7; color: #92400e; }
+.status-approved  { background: #dcfce7; color: #166534; }
+.status-rejected  { background: #fee2e2; color: #991b1b; }
+.status-cancelled { background: #f1f5f9; color: #475569; }
+
+/* ── Row (info + duration) ── */
+.dd-row {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 14px;
+}
+
+/* ── Generic card ── */
+.dd-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.dd-card-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ── Info fields ── */
+.dd-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 16px 20px;
+}
+
+.dd-field {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.dd-field-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 4px;
+}
+
+.dd-field-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ── Duration card ── */
+.dd-duration-card {
+  background: #1e3a8a;
+  border-radius: 18px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+  border: none;
+}
+
+.dd-dur-number {
+  font-size: 52px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.dd-dur-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #93c5fd;
+  margin-top: 4px;
+}
+
+.dd-dur-sub {
+  font-size: 11px;
+  font-weight: 700;
+  color: #93c5fd;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-top: 2px;
+}
+
+.dd-dur-range {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #bfdbfe;
+  gap: 6px;
+}
+
+.dd-arrow { font-size: 14px; opacity: 0.5; }
+
+/* ── Cancel card ── */
+.dd-cancel-card {
+  border-color: #fcd34d;
+  animation: fadeIn 0.3s ease;
+}
+.dd-cancel-card .dd-card-head {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+
+.dd-cancel-hint {
+  padding: 12px 20px 0;
+  margin: 0;
+  font-size: 13px;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+.dd-cancel-btn {
+  margin: 12px 20px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 20px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.3);
+}
+.dd-cancel-btn:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(239,68,68,0.4);
+}
+.dd-cancel-btn:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+
+/* ── Cancelled info card ── */
+.dd-cancelled-card { border-color: #cbd5e1; }
+.dd-cancelled-card .dd-card-head { background: #f8fafc; color: #64748b; }
+.dd-cancelled-card p {
+  padding: 12px 20px 16px;
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ── File ── */
+.dd-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 20px 16px;
+}
+
+.dd-file-name {
+  flex: 1;
+  font-size: 13px;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dd-dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+.dd-dl-btn:hover { background: #dbeafe; }
+
+.dd-upload-zone { padding: 12px 20px 16px; }
+
+.dd-upload-area {
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  color: #64748b;
+}
+.dd-upload-area:hover { background: #f8fafc; border-color: #94a3b8; }
+.dd-upload-icon { font-size: 28px; }
+.dd-upload-area p { font-size: 13px; color: #64748b; line-height: 1.5; margin: 0; }
+.dd-upload-area p strong { color: #2563eb; }
+.dd-upload-area small { font-size: 11px; color: #94a3b8; }
+
+.dd-selected-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  flex-wrap: wrap;
+}
+
+.dd-upload-actions { display: flex; gap: 8px; margin-left: auto; }
+
+.dd-send-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.dd-send-btn:hover:not(:disabled) { background: #1d4ed8; }
+.dd-send-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.dd-ghost-btn {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.dd-ghost-btn:hover { background: #f1f5f9; }
+
+.dd-no-file {
+  font-size: 13px;
+  color: #94a3b8;
+  padding: 12px 20px 16px;
+  font-style: italic;
+}
+
+/* ── Reject card (employee view) ── */
+.dd-reject-card {
+  background: linear-gradient(135deg, #fff5f5, #ffecec);
+  border-color: #ffcccc;
+  border-left: 6px solid #ff4d4f;
+  box-shadow: 0 6px 18px rgba(255,77,79,0.08);
+  animation: fadeIn 0.3s ease;
+}
+.dd-reject-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255,77,79,0.15);
+  transition: 0.2s ease;
+}
+.dd-reject-card .dd-card-head {
+  background: transparent;
+  border-color: #ffcccc;
+  color: #b71c1c;
+  font-size: 14px;
+}
+.dd-reject-reason {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  background: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #f3c2c2;
+  margin: 0 20px 16px;
+}
+
+/* ── Action card (admin/chef) ── */
+.dd-reject-input {
+  padding: 16px 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dd-reject-input label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+.dd-required { color: #ef4444; margin-left: 3px; }
+.dd-reject-input textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+  transition: all 0.2s;
+}
+.dd-reject-input textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+.dd-hint { font-size: 12px; color: #ef4444; }
+
+.dd-action-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.dd-btn-approve,
+.dd-btn-reject {
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dd-btn-approve {
+  background: #16a34a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(22,163,74,0.3);
+}
+.dd-btn-approve:hover:not(:disabled) { background: #15803d; transform: translateY(-1px); }
+.dd-btn-approve:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.dd-btn-reject {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.3);
+}
+.dd-btn-reject:hover:not(:disabled) { background: #dc2626; transform: translateY(-1px); }
+.dd-btn-reject:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ── Animation ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .dd-row { grid-template-columns: 1fr; }
+  .dd-fields { grid-template-columns: 1fr; }
+  .dd-header { flex-wrap: wrap; }
+  .dd-title { font-size: 16px; text-align: left; }
+  .dd-user-card { flex-wrap: wrap; }
+  .dd-header-right { display: none; }
+}

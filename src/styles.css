@@ -1,0 +1,282 @@
+/* ============================================================
+   SIGA RemoteFlow — Global Design System
+   Dark Navy + Indigo theme
+   Font: DM Sans (body) + Syne (headings)
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Syne:wght@600;700;800&display=swap');
+
+/* ── Tokens ── */
+:root {
+  --navy:        #0f172a;
+  --navy-800:    #1e293b;
+  --navy-700:    #334155;
+  --indigo:      #6384eb;
+  --indigo-light:#93a8f4;
+  --indigo-dim:  rgba(99,132,235,0.18);
+
+  --bg-page:     #f0f3f9;
+  --bg-surface:  #ffffff;
+  --bg-muted:    #f8fafd;
+
+  --border:      #e2e9f4;
+  --border-soft: #eef2f9;
+
+  --text-primary:   #0f172a;
+  --text-secondary: #64748b;
+  --text-muted:     #94a3b8;
+
+  --green:  #10b981;
+  --amber:  #f59e0b;
+  --red:    #ef4444;
+  --green-bg: #f0fdf4;
+  --amber-bg: #fffbeb;
+  --red-bg:   #fff1f2;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.06);
+  --shadow-md: 0 4px 16px rgba(15,23,42,0.08);
+  --shadow-lg: 0 8px 32px rgba(15,23,42,0.12);
+
+  --sidebar-w: 230px;
+  --sidebar-w-collapsed: 68px;
+  --topbar-h: 56px;
+
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Syne', system-ui, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: var(--font-body); cursor: pointer; }
+input, select, textarea { font-family: var(--font-body); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+/* ================================================================
+   GLOBAL RESPONSIVE — à ajouter dans src/styles.css
+   ================================================================ */
+
+/* ── Reset de base ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ── Conteneurs principaux ───────────────────────────────────────── */
+.mes-demandes-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ── Grilles et lignes flexibles ─────────────────────────────────── */
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filters-bar {
+  width: 100%;
+}
+
+.filter-group {
+  flex: 1 1 160px;
+  min-width: 0;
+}
+
+.filter-input,
+.filter-select,
+.archive-select {
+  width: 100%;
+  min-width: 0;
+}
+
+.demandes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.demande-card {
+  width: 100%;
+}
+
+/* ── Archive bar ─────────────────────────────────────────────────── */
+.archive-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Tablette (≤ 768px) ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .mes-demandes-container {
+    padding: 16px 12px;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .header h2 {
+    font-size: 18px;
+  }
+
+  .filter-group {
+    flex: 1 1 140px;
+  }
+
+  .demande-body {
+    font-size: 13px;
+  }
+
+  .archive-badge {
+    margin-left: 0;
+  }
+}
+
+/* ── Mobile (≤ 600px) ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .mes-demandes-container {
+    padding: 12px 10px;
+  }
+
+  /* Filtres en colonne */
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    width: 100%;
+    flex: unset;
+  }
+
+  .search-group {
+    width: 100%;
+  }
+
+  .filter-input,
+  .filter-select {
+    width: 100%;
+  }
+
+  .btn-reset {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Archive bar en colonne */
+  .archive-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .archive-toggle-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .archive-select {
+    width: 100%;
+  }
+
+  .archive-badge {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Cartes */
+  .demande-header {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .demande-dates {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .demande-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .btn-detail {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* En-tête */
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-new {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Section label */
+  .section-label span {
+    font-size: 12px;
+  }
+}
+
+/* ── Très petit mobile (≤ 400px) ─────────────────────────────────── */
+@media (max-width: 400px) {
+  .mes-demandes-container {
+    padding: 10px 8px;
+  }
+
+  .header h2 {
+    font-size: 16px;
+  }
+
+  .demande-card {
+    padding: 12px 10px;
+  }
+
+  .status-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .user-avatar {
+    width: 26px;
+    height: 26px;
+    font-size: 12px;
+  }
+}
