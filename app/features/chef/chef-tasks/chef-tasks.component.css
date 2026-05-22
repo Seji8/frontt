@@ -1,0 +1,306 @@
+/* ══════════════════════════════════════
+   VARIABLES
+══════════════════════════════════════ */
+:root {
+  --navy: #1a2340;
+  --navy-800: #1e2d4d;
+  --indigo: #4f6ef7;
+  --indigo-dim: #eef0fe;
+
+  --green: #16a34a;
+  --green-bg: #eaf3de;
+
+  --amber: #ca8a04;
+  --amber-bg: #fef9c3;
+
+  --red: #dc2626;
+  --red-bg: #fce7e7;
+
+  --bg: #f4f7fb;
+  --surface: #ffffff;
+
+  --text: #1a2340;
+  --muted: #64748b;
+
+  --border: rgba(0,0,0,0.08);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+
+  --shadow: 0 8px 24px rgba(26,35,64,0.08);
+}
+
+/* ══════════════════════════════════════
+   CONTAINER
+══════════════════════════════════════ */
+.chef-tasks-container {
+  padding: 28px;
+  max-width: 1250px;
+  margin: auto;
+  background: var(--bg);
+  font-family: system-ui, sans-serif;
+}
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: var(--indigo-dim);
+  color: var(--indigo);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.hero-left h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.hero-left p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.badge-count {
+  background: linear-gradient(135deg, var(--indigo), #3b82f6);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ══════════════════════════════════════
+   STATES
+══════════════════════════════════════ */
+.state-box {
+  background: var(--surface);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 14px;
+}
+
+.state-box.error {
+  color: var(--red);
+  border-left: 4px solid var(--red);
+}
+
+.empty-box {
+  text-align: center;
+  background: var(--surface);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+/* ══════════════════════════════════════
+   GRID
+══════════════════════════════════════ */
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+/* ══════════════════════════════════════
+   CARD
+══════════════════════════════════════ */
+.task-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  overflow: hidden;
+  transition: 0.2s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.10);
+}
+
+/* HEADER */
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  background: #f8fafc;
+}
+
+/* BODY */
+.task-body {
+  padding: 16px;
+}
+
+.task-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.task-info {
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ══════════════════════════════════════
+   SCORE
+══════════════════════════════════════ */
+.score-block {
+  margin: 12px 16px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  border: 1px solid var(--border);
+}
+
+.score-top {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.score-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.score-low {
+  background: var(--green-bg);
+  color: var(--green);
+}
+
+.score-medium {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+.score-high {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.score-meta {
+  font-size: 12px;
+}
+
+.score-small {
+  color: var(--muted);
+}
+
+.bar {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.fill-low { background: var(--green); }
+.fill-medium { background: var(--amber); }
+.fill-high { background: var(--red); }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border-top: 1px solid var(--border);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* BUTTONS */
+.btn-outline {
+  border: 1px solid var(--border);
+  background: white;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.btn-outline:hover {
+  background: var(--navy);
+  color: white;
+}
+
+.btn-approve {
+  background: var(--green);
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.btn-reject {
+  background: var(--red);
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════════
+   LOADING
+══════════════════════════════════════ */
+.score-loading {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 8px 16px;
+}
