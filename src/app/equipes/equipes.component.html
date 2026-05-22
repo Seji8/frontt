@@ -1,0 +1,111 @@
+<div class="equipes-container">
+  <h1>{{ isAdminUser ? 'Team Management' : 'My Team' }}</h1>
+
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+  <!-- Admin View -->
+  <div *ngIf="isAdminUser">
+    <div class="actions-bar">
+      <button *ngIf="!showForm" class="btn btn-primary" (click)="openForm()">
+        + New Team
+      </button>
+    </div>
+
+    <div *ngIf="showForm" class="form-container">
+      <h3>{{ editingId ? 'Edit Team' : 'Create Team' }}</h3>
+      
+      <form [formGroup]="equipeForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="nom">Team Name *</label>
+          <input id="nom" type="text" formControlName="nom" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="chefId">Team Leader</label>
+ <select id="chefId" formControlName="chefId" class="form-control">
+  <option value="">-- Select a team leader --</option>
+  <option *ngFor="let user of users" 
+          [value]="user.id"
+          [style.color]="user.equipeNom ? 'orange' : 'inherit'">
+    {{ getChefLabel(user) }}
+  </option>
+</select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">Save</button>
+          <button type="button" class="btn btn-warning" (click)="closeForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="!showForm" class="table-container">
+  
+
+      <table  class="equipes-table">
+        <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Team Leader</th>
+            <th>Actions</th>
+          </thead>
+        <tbody>
+          <tr *ngFor="let equipe of equipes">
+            <td>{{ equipe.id }}</td>
+            <td><strong>{{ equipe.nom }}</strong></td>
+            <td>
+              <span class="chef-badge" [class.no-chef]="!equipe.chefNom">
+                {{ equipe.chefNom || 'No leader' }}
+              </span>
+            </td>
+            <td>
+              <button class="btn btn-small btn-primary" (click)="editEquipe(equipe)">Edit</button>
+              <button class="btn btn-small btn-danger" (click)="deleteEquipe(equipe.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Team Leader View -->
+  <div *ngIf="isChefUser && myTeam" class="team-detail">
+    <div class="team-header">
+      <h2>{{ myTeam.nom }}</h2>
+      <p>Your Team Members</p>
+    </div>
+    
+    <table class="team-members-table">
+      <thead>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Employee ID</th>
+          <th>Phone</th>
+          <th>City</th>
+          <th>Role</th>
+        </thead>
+      <tbody>
+        <tr *ngFor="let member of myTeam.membres">
+          <td>
+            <strong>{{ member.nom }}</strong>
+            <span *ngIf="member.id === getCurrentUserId()" class="me-badge">(Me)</span>
+          </td>
+          <td>{{ member.email }}</td>
+          <td>{{ member.matricule || '-' }}</td>
+          <td>{{ member.telephone || '-' }}</td>
+          <td>{{ member.ville || '-' }}</td>
+          <td>
+            <span class="role-badge" [ngClass]="'role-' + member.role">
+              {{ getRoleLabel(member.role) }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="team-stats">
+      <p>Total members: <strong>{{ myTeam.membres.length }}</strong></p>
+    </div>
+  </div>
+</div>

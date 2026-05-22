@@ -1,0 +1,76 @@
+/* toutes-demandes.component.css */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.p-toolbar {
+  background: white !important;
+  border-radius: 16px !important;
+  padding: 1rem 1.5rem !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+.p-float-label {
+  display: block;
+  width: 100%;
+}
+
+.w-full {
+  width: 100% !important;
+}
+
+.p-4 {
+  padding: 1.5rem;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.p-8 {
+  padding: 3rem;
+}
+
+.text-6xl {
+  font-size: 4rem;
+}
+
+.text-400 {
+  color: #9ca3af;
+}
+
+.bg-red-100 {
+  background-color: #fee2e2;
+}
+
+.text-red-700 {
+  color: #dc2626;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+.border-round {
+  border-radius: 8px;
+}
+
+/* Table styles */
+.p-table {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.p-table .p-datatable-header {
+  background: #f8f9fa;
+  padding: 1rem;
+}

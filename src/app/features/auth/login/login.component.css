@@ -1,0 +1,341 @@
+/* login.component.css - Version bleu & blanc avec zoom réduit */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffffff 0%, #dce1f2 100%);
+  padding: 20px;
+}
+
+.login-wrapper {
+  display: flex;
+  max-width: 1000px; /* Réduit de 1200px à 900px */
+  width: 100%;
+  background: white;
+  border-radius: 40px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+/* Left side - Image section (réduite) */
+.login-image {
+  flex: 0.9; /* Réduit la proportion */
+  position: relative;
+  overflow: hidden;
+  background: #1976d2;
+}
+
+.work-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  opacity: 0.9;
+}
+
+.login-image:hover .work-photo {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.8) 0%, rgba(21, 101, 192, 0) 100%);
+  z-index: 1;
+}
+
+.image-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px; /* Réduit de 40px à 30px */
+  color: white;
+  z-index: 2;
+}
+
+.company-badge {
+  display: inline-block;
+  margin-bottom: 15px;
+}
+.image-content h3 {
+  font-size: 22px; /* Réduit de 28px à 22px */
+  margin-bottom: 8px; /* Réduit */
+  font-weight: 600;
+}
+
+.image-content p {
+  font-size: 12px; /* Réduit de 14px à 12px */
+  line-height: 1.4;
+  margin-bottom: 15px; /* Réduit */
+  opacity: 0.95;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* Réduit */
+}
+
+.features span {
+  font-size: 11px; /* Réduit de 13px à 11px */
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Right side - Form section (réduite) */
+.login-form {
+  flex: 1.1;
+  padding: 70px 30px; /* Réduit de 50px 40px à 35px 30px */
+  background: white;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 25px; /* Réduit de 35px à 25px */
+}
+
+.logo-icon {
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+}
+
+
+
+.form-header h2 {
+  font-size: 24px; /* Réduit de 28px à 24px */
+  color: #1976d2;
+  margin-bottom: 6px; /* Réduit */
+  font-weight: 600;
+}
+
+.form-header p {
+  color: #666;
+  font-size: 13px; /* Réduit de 14px à 13px */
+}
+
+.form-group {
+  margin-bottom: 18px; /* Réduit de 24px à 18px */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px; /* Réduit */
+  font-weight: 600;
+  color: #333;
+  font-size: 13px; /* Réduit */
+}
+
+.input-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.siga-logo {
+  max-width: 300%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Si vous voulez un logo coloré sur fond bleu */
+.logo-icon.colored {
+  background: #1976d2;
+}
+
+.logo-icon.colored .siga-logo {
+  filter: brightness(0) invert(1); /* Rend le logo blanc */
+}
+
+.input-icon .icon {
+  position: absolute;
+  left: 12px; /* Réduit */
+  font-size: 16px; /* Réduit */
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.input-icon input {
+  width: 100%;
+  padding: 10px 12px 10px 38px; /* Réduit de 14px à 10px */
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px; /* Réduit */
+  transition: all 0.3s ease;
+  font-family: inherit;
+  background: white;
+}
+
+.input-icon input:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.input-icon input.is-invalid {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 11px; /* Réduit */
+  margin-top: 5px; /* Réduit */
+  font-weight: 500;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Réduit de 28px à 20px */
+  font-size: 13px; /* Réduit */
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #666;
+}
+
+.checkbox input {
+  margin-right: 6px; /* Réduit */
+  cursor: pointer;
+}
+
+.forgot-password {
+  color: #1976d2;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.forgot-password:hover {
+  color: #1565c0;
+  text-decoration: underline;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 10px; /* Réduit de 14px à 10px */
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px; /* Réduit */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px; /* Réduit */
+}
+
+.btn-login:hover:not(:disabled) {
+  background: #1565c0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.register-link {
+  text-align: center;
+  font-size: 13px; /* Réduit */
+}
+
+.register-link a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+.alert {
+  padding: 10px 12px; /* Réduit */
+  border-radius: 8px;
+  margin-bottom: 20px; /* Réduit */
+  font-size: 13px; /* Réduit */
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-error {
+  background: #fee;
+  color: #c0392b;
+  border-left: 3px solid #dc3545;
+}
+
+.demo-info {
+  margin-top: 20px; /* Réduit de 30px à 20px */
+  padding: 12px; /* Réduit de 15px à 12px */
+  background: #f5f9ff;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 12px; /* Réduit */
+  color: #666;
+  border: 1px solid #d6e6f5;
+}
+
+.demo-info p {
+  margin: 4px 0; /* Réduit */
+}
+
+.demo-info strong {
+  color: #1976d2;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .login-wrapper {
+    flex-direction: column;
+    max-width: 400px;
+  }
+  
+  .login-image {
+    min-height: 250px;
+  }
+  
+  .image-content {
+    padding: 20px;
+  }
+  
+  .image-content h3 {
+    font-size: 18px;
+  }
+  
+  .login-form {
+    padding: 25px 20px;
+  }
+  
+  .form-header h2 {
+    font-size: 20px;
+  }
+  
+  .features {
+    display: none;
+  }
+}
