@@ -186,9 +186,4 @@ getDemandesEquipe(): Observable<DemandeTeletravail[]> {
     { headers: this.getHeaders() }
   );
 }
-getTaskVariables(taskId: string) {
-  return this.http.get<any>(
-    `http://localhost:8080/api/camunda/task/${taskId}/variables`
-  );
-}
 }

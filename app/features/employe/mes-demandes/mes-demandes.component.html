@@ -47,46 +47,8 @@
   <div *ngIf="error" class="error">
     {{ error }}
   </div>
-<!-- ★ Archive bar — ajoutez juste après .filters-bar -->
-<div class="archive-bar">
-  <button class="archive-toggle-btn" [class.active]="showArchive" (click)="toggleArchive()">
-    <i class="fas fa-archive"></i> Archives
-  </button>
 
-  <ng-container *ngIf="showArchive">
-    <span class="archive-label">Mois :</span>
-    <select class="archive-select" [(ngModel)]="selectedArchiveMonth" (change)="onArchiveMonthChange()">
-      <option *ngFor="let m of availableMonths" [value]="m.value">{{ m.label }}</option>
-    </select>
-    <span class="archive-badge">
-      <i class="fas fa-clock"></i> {{ getSelectedMonthLabel() }}
-    </span>
-  </ng-container>
-</div>
-
-<!-- Section label dynamique -->
-<div class="section-label" *ngIf="!loading && !error">
-  <span>{{ showArchive ?  + getSelectedMonthLabel() + ' — archives' : '📅 ' + getCurrentMonthLabel() + ' — mois en cours' }}</span>
-</div>
-
-<!-- Loading / Error / Empty (identiques) -->
-<div *ngIf="loading" class="loading">Chargement...</div>
-<div *ngIf="error" class="error">{{ error }}</div>
-
-<div *ngIf="!loading && !error && filteredDemandes.length === 0" class="empty">
-  <div class="empty-icon">📋</div>
-  <h3>Aucune demande trouvée</h3>
-  <p *ngIf="demandes.length > 0">Essayez de réinitialiser les filtres.</p>
-  <button class="btn-reset" *ngIf="demandes.length > 0" (click)="resetFilters()">
-    Réinitialiser les filtres
-  </button>
-</div>
-
-<!-- Liste (inchangée) -->
-<div *ngIf="!loading && !error && filteredDemandes.length > 0" class="demandes-list">
-  <!-- ... votre *ngFor existant ... -->
-</div>
-  <!--  UTILISER filteredDemandes au lieu de demandes -->
+  <!-- ✅ UTILISER filteredDemandes au lieu de demandes -->
   <div *ngIf="!loading && filteredDemandes.length === 0" class="empty">
   <div class="empty-icon">📋</div>
   <h3>Aucune demande</h3>
@@ -112,7 +74,7 @@
     Réinitialiser les filtres
   </button>
 </div>
-  <!-- UTILISER filteredDemandes au lieu de demandes -->
+  <!-- ✅ UTILISER filteredDemandes au lieu de demandes -->
   <div *ngIf="!loading && filteredDemandes.length > 0" class="demandes-list">
     <div class="demande-card" *ngFor="let demande of filteredDemandes">
       <div class="demande-header">
@@ -122,19 +84,10 @@
       
       <div class="demande-body">
         <div class="demande-motif">
-          <td class="user-cell">
-
-            <div class="user-avatar">
-              {{ (demande.utilisateurNom || 'U').charAt(0) }}
-            </div>
-
-            <div class="user-info">
-            </div>
-          </td>
           <strong>Motif :</strong> {{ demande.motif }}
         </div>
         <div class="demande-dates">
-          <span> {{ formatDate(demande.dateDebut) }} → {{ formatDate(demande.dateFin) }}</span>
+          <span>📅 {{ formatDate(demande.dateDebut) }} → {{ formatDate(demande.dateFin) }}</span>
           <span class="demande-type">{{ getTypeLabel(demande.type) }}</span>
         </div>
       </div>

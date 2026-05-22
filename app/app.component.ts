@@ -100,12 +100,12 @@ toggleNotifications(event: MouseEvent): void {
     this.notificationService.markAllRead();
   }
 }
-getNotificationIcon(type: string, statut: string): string {
-  if (type === 'NEW_DEMANDE') return 'fas fa-file-alt';
-  if (statut === 'APPROVED')  return 'fas fa-check-circle';
-  if (statut === 'REJECTED')  return 'fas fa-times-circle';
-  return 'fas fa-bell';
-}
+  getNotificationIcon(type: string, statut: string): string {
+    if (type === 'NEW_DEMANDE') return '📋';
+    if (statut === 'APPROVED')  return '✅';
+    if (statut === 'REJECTED')  return '❌';
+    return '🔔';
+  }
 
   navigateToDemandeFromNotif(notif: AppNotification): void {
     this.showNotifications = false;

@@ -21,10 +21,6 @@ export class MesDemandesComponent implements OnInit {
   error = '';
   selectedDemande: DemandeTeletravail | null = null;
   showDetailModal = false;
-  showArchive = false;
-selectedArchiveMonth = '';          // format 'YYYY-MM'
-availableMonths: { value: string; label: string }[] = [];
-private allDemandes: DemandeTeletravail[] = [];  // garde une copie complète
 
   statusFilter: string = 'ALL';
   typeFilter: string = 'ALL';
@@ -57,24 +53,11 @@ private allDemandes: DemandeTeletravail[] = [];  // garde une copie complète
   ) {}
 
   ngOnInit(): void {
-    console.log(' MesDemandesComponent - ngOnInit');
-      this.buildAvailableMonths();
+    console.log('📄 MesDemandesComponent - ngOnInit');
     this.loadUserInfo();
     this.cdr.detectChanges();
     this.loadDemandes();
   }
-  buildAvailableMonths(): void {
-  const now = new Date();
-  const months: { value: string; label: string }[] = [];
-  for (let i = 1; i <= 12; i++) {          // 12 derniers mois
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    const label = d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-    months.push({ value, label: label.charAt(0).toUpperCase() + label.slice(1) });
-  }
-  this.availableMonths = months;
-  this.selectedArchiveMonth = months[0]?.value ?? '';
-}
 
   loadUserInfo(): void {
     const userStr = localStorage.getItem('user');
@@ -92,14 +75,13 @@ private allDemandes: DemandeTeletravail[] = [];  // garde une copie complète
   }
 
   loadDemandes(): void {
-  console.log(' loadDemandes - DÉBUT');
+  console.log('🔄 loadDemandes - DÉBUT');
   this.cdr.detectChanges();
   
   this.requestService.getMyDemandes().subscribe({
     next: (data) => {
       console.log('✅ Demandes reçues du backend:', data.length);
-        this.allDemandes = data;          // on garde une copie complète
-        this.applyFilters();      
+      
       if (data.length > 0) {
         console.log('📊 Exemple de demande:', data[0]);
         console.log('📊 Propriétés disponibles:', Object.keys(data[0]));
@@ -230,43 +212,5 @@ private allDemandes: DemandeTeletravail[] = [];  // garde une copie complète
   getTotalCount(): number {
     return this.demandes.length;
   }
-toggleArchive(): void {
-  this.showArchive = !this.showArchive;
-  this.applyMonthFilter();
-}
 
-onArchiveMonthChange(): void {
-  this.applyMonthFilter();
-}
-
-applyMonthFilter(): void {
-  const now = new Date();
-  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-
-  if (this.showArchive) {
-    this.demandes = this.allDemandes.filter(d => {
-      if (!d.dateCreation) return false;
-      const dm = d.dateCreation.substring(0, 7);   // 'YYYY-MM'
-      return dm === this.selectedArchiveMonth;
-    });
-  } else {
-    this.demandes = this.allDemandes.filter(d => {
-      if (!d.dateCreation) return false;
-      return d.dateCreation.substring(0, 7) === currentMonth;
-    });
-  }
-
-  this.applyFilters();
-  this.cdr.detectChanges();
-}
-
-getSelectedMonthLabel(): string {
-  return this.availableMonths.find(m => m.value === this.selectedArchiveMonth)?.label ?? '';
-}
-
-getCurrentMonthLabel(): string {
-  const now = new Date();
-  const label = now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-  return label.charAt(0).toUpperCase() + label.slice(1);
-}
 }

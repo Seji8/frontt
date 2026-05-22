@@ -1,270 +1,144 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
-
 import { CamundaService, Task } from '../../../core/services/camunda.service';
 import { AuthService } from '../../../core/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chef-tasks',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ConfirmDialogModule,
-    ToastModule,
-  ],
-  providers: [
-    ConfirmationService,
-    MessageService,
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chef-tasks.component.html',
   styleUrls: ['./chef-tasks.component.css']
 })
-export class ChefTasksComponent implements OnInit, OnDestroy {
-
+export class ChefTasksComponent implements OnInit {
   tasks: Task[] = [];
   loading = false;
   errorMessage = '';
-
-  // 👉 cache des scores
-  scores: Record<number, any> = {};
-
   selectedTask: Task | null = null;
   showDetailModal = false;
   rejectReason = '';
-
-  processingTaskId: string | null = null;
-
-  private subs = new Subscription();
 
   constructor(
     private camundaService: CamundaService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadTasks();
   }
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
-  }
-
-  // ───────────────────────── TASKS ─────────────────────────
-
   loadTasks(): void {
-  this.loading = true;
-  this.errorMessage = '';
-
-  this.camundaService.getChefTasks().subscribe({
-    next: (tasks) => {
-      this.tasks = tasks;
-      this.loading = false;
-
-      // reset + reload scores proprement
-      this.loadScores(tasks);
-
-      setTimeout(() => {
-        this.loadScores(tasks);
-      }, 100);
-
-      this.cdr.detectChanges();
-    },
-    error: (error) => {
-      this.errorMessage =
-        error.status === 403
-          ? "Accès refusé"
-          : error.error?.message || 'Erreur';
-
-      this.loading = false;
-    }
-  });
-}
-
-  refresh(): void {
-    this.loadTasks();
-  }
-
-  // ───────────────────────── SCORES ─────────────────────────
-
- loadScores(tasks: Task[]): void {
-  tasks.forEach(task => {
-    if (!task.demandeId) return;
-
-    this.camundaService.getScoreDemande(task.demandeId).subscribe({
-      next: (res) => {
-
-        this.scores = {
-          ...this.scores,
-          [task.demandeId!]: { ...res }
-        };
-
+    this.loading = true;
+    this.errorMessage = '';
+    this.camundaService.getChefTasks().subscribe({
+      next: (tasks) => {
+        this.tasks = tasks;
+        this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error(err)
+      error: (error) => {
+        this.errorMessage = error.status === 403
+          ? "Vous n'avez pas les droits pour accéder à cette page."
+          : error.error?.message || 'Erreur lors du chargement des tâches';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
     });
-  });
-}
-
-  getScore(demandeId: number | undefined): any {
-    if (!demandeId) return null;
-    return this.scores[demandeId] ?? null;
-  }
-
-  // ───────────────────────── DETAILS ─────────────────────────
-
-  openDetailModal(task: Task): void {
-    this.selectedTask = task;
-    this.rejectReason = '';
-    this.showDetailModal = true;
-  }
-
-  closeDetailModal(): void {
-    this.selectedTask = null;
-    this.showDetailModal = false;
-    this.rejectReason = '';
   }
 
   viewDemandeDetail(task: Task): void {
     if (!task.demandeId) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Introuvable',
-        detail: 'Aucun ID de demande associé.',
-      });
+      alert('ID de demande non trouvé');
       return;
     }
-
     this.router.navigate(['/chef/demande', task.demandeId]);
   }
 
-  // ───────────────────────── APPROVE ─────────────────────────
-refreshScore(demandeId: number) {
+  openDetailModal(task: Task): void {
+    this.selectedTask = task;
+    this.showDetailModal = true;
+    this.rejectReason = '';
+    this.cdr.detectChanges();
+  }
 
-  this.camundaService.getScoreDemande(demandeId).subscribe({
+  closeDetailModal(): void {
+    this.showDetailModal = false;
+    this.selectedTask = null;
+    this.rejectReason = '';
+    this.cdr.detectChanges();
+  }
 
-    next: (res) => {
-
-      console.log("🔥 SCORE API =", res);
-
-      this.scores = {
-        ...this.scores,
-        [demandeId]: { ...res }
-      };
-
-      console.log("🔥 SCORES CACHE =", this.scores);
-
-      this.cdr.detectChanges();
-    },
-
-    error: (err) => console.error(err)
-  });
-}
   approveTask(task: Task): void {
-  this.camundaService.approveTask(task.id, 'Approuvé par chef').subscribe({
-    next: () => {
-
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Approuvé',
-        detail: 'Demande validée'
-      });
-
-      // 🔥 refresh SCORE d'abord
-      if (task.demandeId) {
-        delete this.scores[task.demandeId];
-      }
-
-      // 🔥 puis reload tasks avec petit delay
-      setTimeout(() => {
-        this.loadTasks();
-      }, 300);
-
-    },
-    error: (err) => console.error(err)
-  });
-  
-}
-
-  private doApprove(task: Task): void {
-    this.processingTaskId = task.id;
-
-    const sub = this.camundaService.approveTask(task.id, 'Approuvé par chef')
-      .subscribe({
+    if (confirm(`Approuver la demande de ${task.utilisateurNom || task.name} ?`)) {
+      this.camundaService.approveTask(task.id, 'Approuvé par le chef').subscribe({
         next: () => {
-          this.processingTaskId = null;
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Approuvé',
-            detail: 'Demande approuvée avec succès'
-          });
-
+          alert('✅ Demande approuvée avec succès');
           this.loadTasks();
+          this.closeDetailModal();
         },
-        error: () => {
-          this.processingTaskId = null;
-        }
+        error: () => alert('❌ Erreur lors de l\'approbation')
       });
-      
-
-    this.subs.add(sub);
+    }
   }
 
-  // ───────────────────────── REJECT ─────────────────────────
-
- rejectTask(task: Task): void {
-  const reason = prompt('Motif du rejet :');
-  if (!reason) return;
-
-  this.camundaService.rejectTask(task.id, reason).subscribe({
-    next: () => {
-
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Rejeté',
-        detail: 'Demande rejetée'
+  rejectTask(task: Task): void {
+    const raison = prompt('Motif du rejet :');
+    if (raison?.trim()) {
+      this.camundaService.rejectTask(task.id, raison).subscribe({
+        next: () => {
+          alert('❌ Demande rejetée');
+          this.loadTasks();
+          this.closeDetailModal();
+        },
+        error: () => alert('❌ Erreur lors du rejet')
       });
-
-      if (task.demandeId) {
-        delete this.scores[task.demandeId];
-      }
-
-      setTimeout(() => {
-        this.loadTasks();
-      }, 300);
-
-    },
-    error: (err) => console.error(err)
-  });
-}
-
-  // ───────────────────────── HELPERS ─────────────────────────
-
-  isProcessing(taskId: string): boolean {
-    return this.processingTaskId === taskId;
+    }
   }
 
+  rejectTaskWithReason(): void {
+    if (this.selectedTask && this.rejectReason.trim()) {
+      this.camundaService.rejectTask(this.selectedTask.id, this.rejectReason).subscribe({
+        next: () => {
+          alert('❌ Demande rejetée');
+          this.loadTasks();
+          this.closeDetailModal();
+        },
+        error: () => alert('❌ Erreur lors du rejet')
+      });
+    } else {
+      alert('Veuillez saisir un motif de rejet');
+    }
+  }
+
+  // Méthodes de formatage sécurisées
   formatDate(date: string | undefined): string {
     if (!date) return 'Non définie';
+    try {
+      return new Date(date).toLocaleString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    } catch {
+      return 'Date invalide';
+    }
+  }
 
-    return new Date(date).toLocaleString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  formatDateShort(date: string | undefined): string {
+    if (!date) return 'Non définie';
+    try {
+      return new Date(date).toLocaleDateString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      });
+    } catch {
+      return 'Date invalide';
+    }
+  }
+
+  refresh(): void {
+    this.loadTasks();
   }
 }

@@ -1,132 +1,131 @@
 <div class="chef-tasks-container">
-
-  <!-- HERO (comme admin) -->
-  <div class="hero">
-
-    <div class="hero-left">
-      <div class="hero-badge">
-        👨‍💼 Validation Chef
-      </div>
-
-      <h2>Centre de validation des demandes</h2>
-      <p>Gérez et validez les demandes des employés</p>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">
+      <i class="fas fa-users"></i>
+      <h2>Validation Chef d'équipe</h2>
     </div>
-
-    <div class="hero-right">
-      <div class="badge-count">
-        {{ tasks.length }} tâche(s)
+    <div class="header-actions">
+      <div class="header-badge">
+        <span class="badge">{{ tasks.length }} demande(s) à valider</span>
       </div>
+      <button class="btn-refresh" (click)="refresh()">
+        <i class="fas fa-sync-alt"></i> Rafraîchir
+      </button>
     </div>
-
   </div>
 
-  <!-- STATES -->
-  <div *ngIf="loading" class="state-box">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <span>Chargement des tâches...</span>
+    <p>Chargement des demandes...</p>
   </div>
 
-  <div *ngIf="errorMessage" class="state-box error">
-    ⚠ {{ errorMessage }}
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-state">
+    <i class="fas fa-exclamation-triangle"></i>
+    <p>{{ errorMessage }}</p>
+    <button class="btn-retry" (click)="loadTasks()">Réessayer</button>
   </div>
 
-  <div *ngIf="!loading && tasks.length === 0" class="empty-box">
-    <div class="empty-icon">✅</div>
-    <h3>Aucune tâche</h3>
-    <p>Toutes les demandes ont été traitées</p>
+  <!-- Empty State -->
+  <div *ngIf="!loading && tasks.length === 0 && !errorMessage" class="empty-state">
+    <div class="empty-icon">🏆</div>
+    <h3>Aucune demande à valider</h3>
+    <p>Vous avez traité toutes les demandes en attente.</p>
   </div>
 
-  <!-- GRID (comme admin) -->
+  <!-- Tasks Grid -->
   <div class="tasks-grid" *ngIf="!loading && tasks.length > 0">
-
     <div class="task-card" *ngFor="let task of tasks">
-
-      <!-- HEADER -->
-      <div class="task-header">
-        <span class="task-type">Validation Chef</span>
-        <span class="task-date">
+      <div class="task-card-header">
+        <div class="task-type">
+          <i class="fas fa-user-check"></i>
+          <span>Validation Chef</span>
+        </div>
+        <div class="task-date">
+          <i class="fas fa-calendar-alt"></i>
           {{ formatDate(task.createTime) }}
-        </span>
+        </div>
       </div>
 
-      <!-- BODY -->
-      <div class="task-body">
-
-        <h3 class="task-title">
-          {{ task.utilisateurNom || task.name }}
-        </h3>
+      <div class="task-card-body">
+        <div class="task-title">
+          <h4>{{ task.utilisateurNom || task.name }}</h4>
+        </div>
 
         <div class="task-info">
-          <div>👤 {{ task.assignee || 'Non assignée' }}</div>
-          <div class="process-clean">
-            Process actif
+          <div class="info-item">
+            <i class="fas fa-hashtag"></i>
+            <span>Demande #{{ task.demandeId || 'N/A' }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Période: {{ formatDateShort(task.dateDebut) }} → {{ formatDateShort(task.dateFin) }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-hourglass-half"></i>
+            <span>Durée: {{ task.duree || 0 }} jour(s)</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-comment"></i>
+            <span>Motif: {{ task.motif || 'Non spécifié' }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-code-branch"></i>
+            <span class="process-id">Process: {{ task.processInstanceId | slice:0:8 }}...</span>
           </div>
         </div>
 
-      </div>
-      <!-- SCORE -->
-<div class="score-block" *ngIf="task.demandeId && scores[task.demandeId] as score">
 
-  <div class="score-top">
-    <span>📊 Score de disponibilité de l’équipe</span>
-  </div>
-
-  <div class="score-row">
-
-    <div class="score-circle" [ngClass]="'score-' + score.niveau">
-      {{ getScore(task.demandeId)?.score }}
-    </div>
-
-    <div class="score-meta">
-      <div class="score-label">{{ score.label }}</div>
-      <div class="score-small">
-        {{ score.demandesEnChevauchement }} / {{ score.tailleEquipe }}
-      </div>
-    </div>
-
-  </div>
-
-  <div class="bar">
-    <div class="fill"
-         [ngClass]="'fill-' + score.niveau"
-         [style.width.%]="score.score"></div>
-  </div>
-
-</div>
-<div class="score-loading" *ngIf="task.demandeId && !scores?.[task.demandeId]">
-  ⏳ Calcul du score...
-</div>
-
-      <!-- FOOTER -->
-      <div class="task-footer">
-
-        <button class="btn-outline" (click)="viewDemandeDetail(task)">
-          👁 Détails
+      <div class="task-card-footer">
+        <!-- ✅ FIX: openDetailModal au lieu de viewDemandeDetail -->
+        <button class="btn-detail" (click)="openDetailModal(task)">
+          <i class="fas fa-file-alt"></i> Voir le détail
         </button>
-
-    
-
-          <div class="actions">
+        <div class="task-actions">
           <button class="btn-approve" (click)="approveTask(task)">
-            ✔ Approuver
+            <i class="fas fa-check-circle"></i> Approuver
           </button>
-
           <button class="btn-reject" (click)="rejectTask(task)">
-            ✖ Rejeter
+            <i class="fas fa-times-circle"></i> Rejeter
           </button>
-
         </div>
-
       </div>
-
     </div>
-
   </div>
-
 </div>
 
+<!-- Modal Détail avec motif de rejet -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Détail de la demande</h3>
+      <button class="modal-close" (click)="closeDetailModal()">&times;</button>
+    </div>
+    <div class="modal-body" *ngIf="selectedTask">
+      <p><strong>ID:</strong> {{ selectedTask.demandeId }}</p>
+      <p><strong>Employé:</strong> {{ selectedTask.utilisateurNom }}</p>
+      <p><strong>Motif:</strong> {{ selectedTask.motif }}</p>
+      <p><strong>Date début:</strong> {{ formatDate(selectedTask.dateDebut) }}</p>
+      <p><strong>Date fin:</strong> {{ formatDate(selectedTask.dateFin) }}</p>
+      <p><strong>Durée:</strong> {{ selectedTask.duree }} jours</p>
+      <p><strong>Process ID:</strong> {{ selectedTask.processInstanceId }}</p>
 
-
-
-  
-
+   
+      <div class="reject-reason">
+        <label for="rejectReason">Motif du rejet :</label>
+        <textarea
+          id="rejectReason"
+          [(ngModel)]="rejectReason"
+          placeholder="Saisissez le motif du rejet..."
+          rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-approve" (click)="approveTask(selectedTask!)">Approuver</button>
+      <button class="btn-reject" (click)="rejectTaskWithReason()">Rejeter avec motif</button>
+      <button class="btn-secondary" (click)="closeDetailModal()">Fermer</button>
+    </div>
+  </div>
+</div>

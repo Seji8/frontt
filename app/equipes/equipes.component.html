@@ -8,7 +8,7 @@
   <div *ngIf="isAdminUser">
     <div class="actions-bar">
       <button *ngIf="!showForm" class="btn btn-primary" (click)="openForm()">
-        + Nouvelle équipe
+        + New Team
       </button>
     </div>
 
@@ -17,14 +17,14 @@
       
       <form [formGroup]="equipeForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="nom">Nom d'équipe *</label>
+          <label for="nom">Team Name *</label>
           <input id="nom" type="text" formControlName="nom" class="form-control">
         </div>
 
         <div class="form-group">
-          <label for="chefId">Chef d'équipe</label>
+          <label for="chefId">Team Leader</label>
  <select id="chefId" formControlName="chefId" class="form-control">
-  <option value="">-- Choisir un chef d'équipe --</option>
+  <option value="">-- Select a team leader --</option>
   <option *ngFor="let user of users" 
           [value]="user.id"
           [style.color]="user.equipeNom ? 'orange' : 'inherit'">
@@ -34,8 +34,8 @@
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn btn-success">Enregistrer</button>
-          <button type="button" class="btn btn-warning" (click)="closeForm()">Annuler</button>
+          <button type="submit" class="btn btn-success">Save</button>
+          <button type="button" class="btn btn-warning" (click)="closeForm()">Cancel</button>
         </div>
       </form>
     </div>
@@ -46,8 +46,8 @@
       <table  class="equipes-table">
         <thead>
             <th>ID</th>
-            <th>Nom</th>
-            <th>Chef d'équipe</th>
+            <th>Name</th>
+            <th>Team Leader</th>
             <th>Actions</th>
           </thead>
         <tbody>
@@ -60,8 +60,8 @@
               </span>
             </td>
             <td>
-              <button class="btn btn-small btn-primary" (click)="editEquipe(equipe)">Modifier</button>
-              <button class="btn btn-small btn-danger" (click)="deleteEquipe(equipe.id)">Supprimer</button>
+              <button class="btn btn-small btn-primary" (click)="editEquipe(equipe)">Edit</button>
+              <button class="btn btn-small btn-danger" (click)="deleteEquipe(equipe.id)">Delete</button>
             </td>
           </tr>
         </tbody>
@@ -78,11 +78,11 @@
     
     <table class="team-members-table">
       <thead>
-          <th>Nom</th>
+          <th>Name</th>
           <th>Email</th>
-          <th>Matricule</th>
-          <th>Tél</th>
-          <th>Ville</th>
+          <th>Employee ID</th>
+          <th>Phone</th>
+          <th>City</th>
           <th>Role</th>
         </thead>
       <tbody>

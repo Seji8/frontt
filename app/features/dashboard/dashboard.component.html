@@ -1,243 +1,147 @@
 <div class="dashboard-container">
-
-  <!-- ── Welcome banner ── -->
+  <!-- En-tête avec bienvenue -->
   <div class="dashboard-header">
     <div class="header-content">
       <div class="welcome-section">
         <h1 class="welcome-title">
-          Bon retour, <span class="user-name">{{ userName }}</span>
+          <span class="wave-emoji">👋</span> Bon retour, <span class="user-name">{{ userName }}!</span>
         </h1>
-        <p class="welcome-subtitle">
-          Voici l'état de vos demandes de télétravail aujourd'hui
-        </p>
+        <p class="welcome-subtitle">Voici ce qui se passe avec vos demandes de télétravail aujourd'hui</p>
       </div>
       <div class="date-badge">
         <i class="fas fa-calendar-alt"></i>
         <span>{{ currentDate }}</span>
+        <div class="notification-badge">
+          <i class="fas fa-bell"></i>
+          <span class="notification-count" *ngIf="notificationsCount > 0">{{ notificationsCount }}</span>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ── Error ── -->
-  <div class="dash-error" *ngIf="errorMessage">
-    <i class="fas fa-exclamation-triangle"></i>
-    {{ errorMessage }}
-    <button class="btn-retry" (click)="refresh()">Réessayer</button>
-  </div>
-
-  <!-- ── Stat cards ── -->
+  <!-- Cartes de statistiques -->
   <div class="stats-grid">
-
     <div class="stat-card total">
-      <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+      <div class="stat-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
       <div class="stat-info">
         <h3 class="stat-value">{{ totalRequests }}</h3>
         <p class="stat-label">Total Demandes</p>
       </div>
-      <div class="stat-trend positive"><i class="fas fa-arrow-up"></i></div>
+      <div class="stat-trend positive">
+        <i class="fas fa-arrow-up"></i>
+      </div>
     </div>
 
     <div class="stat-card pending">
-      <div class="stat-icon"><i class="fas fa-clock"></i></div>
+      <div class="stat-icon">
+        <i class="fas fa-clock"></i>
+      </div>
       <div class="stat-info">
         <h3 class="stat-value">{{ pendingRequests }}</h3>
         <p class="stat-label">En Attente</p>
       </div>
-      <div class="stat-trend neutral"><i class="fas fa-minus"></i></div>
+      <div class="stat-trend neutral">
+        <i class="fas fa-minus"></i>
+      </div>
     </div>
 
     <div class="stat-card approved">
-      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
       <div class="stat-info">
         <h3 class="stat-value">{{ approvedRequests }}</h3>
         <p class="stat-label">Approuvées</p>
       </div>
-      <div class="stat-trend positive"><i class="fas fa-arrow-up"></i></div>
+      <div class="stat-trend positive">
+        <i class="fas fa-arrow-up"></i>
+*      </div>
     </div>
 
     <div class="stat-card rejected">
-      <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+      <div class="stat-icon">
+        <i class="fas fa-times-circle"></i>
+      </div>
       <div class="stat-info">
         <h3 class="stat-value">{{ rejectedRequests }}</h3>
         <p class="stat-label">Refusées</p>
       </div>
-      <div class="stat-trend negative"><i class="fas fa-arrow-down"></i></div>
+      <div class="stat-trend negative">
+      </div>
     </div>
-
   </div>
 
-  <!-- ── Main grid ── -->
+  <!-- Graphique et actions rapides -->
   <div class="dashboard-grid">
-
-    <!-- Chart -->
+    <!-- Graphique des demandes -->
     <div class="chart-card">
       <div class="card-header">
-        <h3><i class="fas fa-chart-bar"></i> Évolution des demandes</h3>
+        <h3>
+          <i class="fas fa-chart-bar"></i>
+          Évolution des demandes
+        </h3>
         <select class="chart-select" (change)="onChartPeriodChange($event)">
           <option value="week">Cette semaine</option>
-          <option value="month" selected>Ce mois</option>
+          <option value="month">Ce mois</option>
           <option value="year">Cette année</option>
-          
         </select>
       </div>
-
-      <div class="chart-legend">
-        <span class="legend-item approved">
-          <span class="legend-dot"></span> Approuvées
-        </span>
-        <span class="legend-item rejected">
-          <span class="legend-dot"></span> Refusées
-        </span>
-        <span class="legend-item pending">
-          <span class="legend-dot"></span> En attente
-        </span>
-      </div>
-
       <div class="chart-container">
-        <div *ngIf="loading" class="chart-loading">
-          <div class="spinner-sm"></div>
-        </div>
-        <canvas id="requestsChart" *ngIf="!loading"></canvas>
+        <canvas id="requestsChart"></canvas>
       </div>
     </div>
 
-    <!-- Quick actions -->
+    <!-- Actions rapides -->
     <div class="quick-actions-card">
       <div class="card-header">
-        <h3><i class="fas fa-bolt"></i> Actions rapides</h3>
+        <h3>
+          <i class="fas fa-bolt"></i>
+          Actions rapides
+        </h3>
+        <i class="fas fa-ellipsis-h"></i>
       </div>
       <div class="actions-list">
-
-        <button class="action-btn primary" *ngIf="!isAdmin" (click)="newRequest()">
-          <div class="action-icon-wrap primary-icon">
-            <i class="fas fa-plus-circle"></i>
-          </div>
+        <button class="action-btn primary" (click)="newRequest()">
+          <i class="fas fa-plus-circle"></i>
           <div class="action-content">
             <span class="action-title">Nouvelle demande</span>
             <span class="action-desc">Créer une demande de télétravail</span>
           </div>
-          <i class="fas fa-chevron-right action-arrow"></i>
+          <i class="fas fa-chevron-right"></i>
         </button>
-
-        <button class="action-btn secondary" *ngIf="!isAdmin" (click)="viewRequests()">
-          <div class="action-icon-wrap secondary-icon">
-            <i class="fas fa-list-alt"></i>
-          </div>
+        
+        <button class="action-btn secondary" (click)="viewRequests()">
+          <i class="fas fa-list-alt"></i>
           <div class="action-content">
             <span class="action-title">Mes demandes</span>
             <span class="action-desc">Voir toutes mes demandes</span>
           </div>
-          <i class="fas fa-chevron-right action-arrow"></i>
+          <i class="fas fa-chevron-right"></i>
         </button>
-
+        
         <button class="action-btn info" *ngIf="isAdmin" (click)="manageUsers()">
-          <div class="action-icon-wrap info-icon">
-            <i class="fas fa-users"></i>
-          </div>
+          <i class="fas fa-users"></i>
           <div class="action-content">
             <span class="action-title">Gérer les utilisateurs</span>
             <span class="action-desc">Ajouter ou modifier des utilisateurs</span>
           </div>
-          <i class="fas fa-chevron-right action-arrow"></i>
+          <i class="fas fa-chevron-right"></i>
         </button>
-
+        
         <button class="action-btn warning" *ngIf="isChef" (click)="validateRequests()">
-          <div class="action-icon-wrap warning-icon">
-            <i class="fas fa-check-double"></i>
-          </div>
+          <i class="fas fa-check-double"></i>
           <div class="action-content">
             <span class="action-title">Validations en attente</span>
             <span class="action-desc">{{ pendingValidations }} demande(s) à valider</span>
           </div>
-          <i class="fas fa-chevron-right action-arrow"></i>
+          <i class="fas fa-chevron-right"></i>
         </button>
-
-      </div>
-
-      <!-- Processing rates -->
-      <div class="rates-section" *ngIf="totalRequests > 0">
-        <div class="card-header rates-header">
-          <h3><i class="fas fa-chart-pie"></i> Taux de traitement</h3>
-        </div>
-
-        <div class="rate-row">
-          <div class="rate-info">
-            <span class="rate-label">Approbation</span>
-            <span class="rate-value">{{ getApprovalRate() }}%</span>
-          </div>
-          <div class="rate-track">
-            <div class="rate-fill fill-green" [style.width.%]="getApprovalRate()"></div>
-          </div>
-        </div>
-
-        <div class="rate-row">
-          <div class="rate-info">
-            <span class="rate-label">Traitement global</span>
-            <span class="rate-value">{{ getProcessingRate() }}%</span>
-          </div>
-          <div class="rate-track">
-            <div class="rate-fill fill-indigo" [style.width.%]="getProcessingRate()"></div>
-          </div>
-        </div>
-
-        <div class="rate-row">
-          <div class="rate-info">
-            <span class="rate-label">En attente</span>
-            <span class="rate-value">
-              {{ totalRequests ? (pendingRequests / totalRequests * 100 | number:'1.0-0') : 0 }}%
-            </span>
-          </div>
-          <div class="rate-track">
-            <div class="rate-fill fill-amber"
-              [style.width.%]="totalRequests ? (pendingRequests / totalRequests * 100) : 0">
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ── Recent requests ── -->
-  <div class="recent-card" *ngIf="recentRequests.length > 0 && !isAdmin">
-    <div class="card-header">
-      <h3><i class="fas fa-history"></i> Dernières demandes</h3>
-      <button class="btn-see-all" (click)="viewRequests()">
-        Voir tout <i class="fas fa-arrow-right"></i>
-      </button>
-    </div>
-
-    <div class="recent-list">
-      <div class="recent-item"
-           *ngFor="let req of recentRequests"
-           (click)="viewRequestDetail(req.id)">
-        <div class="recent-left">
-          <div class="recent-id">#{{ req.id }}</div>
-          <div class="recent-meta">
-            <span class="recent-motif">{{ req.motif }}</span>
-            <span class="recent-date">{{ req.dateCreation }} · {{ req.type }}</span>
-          </div>
-        </div>
-        <span class="status-badge"
-          [class.status-pending]="req.statut === 'PENDING'"
-          [class.status-approved]="req.statut === 'APPROVED'"
-          [class.status-rejected]="req.statut === 'REJECTED'">
-          {{ req.statutLabel }}
-        </span>
       </div>
     </div>
   </div>
 
-  <!-- ── Empty state ── -->
-  <div class="dash-empty" *ngIf="!loading && totalRequests === 0 && !errorMessage">
-    <div class="empty-icon-wrap">
-      <i class="fas fa-inbox"></i>
-    </div>
-    <h3>Aucune demande pour le moment</h3>
-    <p>Commencez par créer votre première demande de télétravail.</p>
-    <button class="btn-new-empty" (click)="newRequest()">
-      <i class="fas fa-plus"></i> Créer une demande
-    </button>
-  </div>
 
+   
 </div>

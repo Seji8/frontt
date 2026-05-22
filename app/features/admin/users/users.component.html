@@ -1,199 +1,144 @@
 <div class="users-container">
+  <h1>User Management</h1>
 
-  <!-- ── Page header ───────────────────────────────────────────── -->
-  <div class="page-header">
-    <div>
-      <h1>Gestion des utilisateurs</h1>
-      <p class="page-subtitle" *ngIf="!loading">{{ users.length }} utilisateur{{ users.length !== 1 ? 's' : '' }} enregistré{{ users.length !== 1 ? 's' : '' }}</p>
-    </div>
+  <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+  <div class="actions-bar">
     <button *ngIf="!showForm" class="btn btn-primary" (click)="openForm()">
-      <span class="btn-icon">+</span> Ajouter un utilisateur
+      + Add New User
     </button>
   </div>
 
-  <!-- ── Alerts ────────────────────────────────────────────────── -->
-  <div *ngIf="error" class="alert alert-error">
-    <span class="alert-icon">⚠</span> {{ error }}
-  </div>
-  <div *ngIf="success" class="alert alert-success">
-    <span class="alert-icon">✓</span> {{ success }}
-  </div>
-
-  <!-- ── Create / Edit form ─────────────────────────────────────── -->
-  <div *ngIf="showForm" class="form-card">
-    <div class="form-card-header">
-      <h2>{{ editingId ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur' }}</h2>
-      <button class="btn-close" (click)="closeForm()" aria-label="Fermer">✕</button>
-    </div>
-
-    <div *ngIf="!editingId" class="info-banner">
-      Un mot de passe temporaire sera généré automatiquement et envoyé à l'adresse e-mail indiquée.
+  <div *ngIf="showForm" class="form-container card">
+    <h3>{{ editingId ? 'Edit User' : 'Create New User' }}</h3>
+    
+    <div *ngIf="!editingId" class="info-message">
+      <p>Password will be automatically generated and sent to the user's email.</p>
     </div>
 
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-
-      <!-- Row 1 -->
       <div class="form-row">
         <div class="form-group">
-          <label for="nom">Nom et prénom <span class="required">*</span></label>
-          <input id="nom" type="text" formControlName="nom" class="form-control"
-                 placeholder="ex. Ahmed Nasr"
-                 [class.is-invalid]="userForm.get('nom')?.invalid && userForm.get('nom')?.touched">
-          <div *ngIf="userForm.get('nom')?.invalid && userForm.get('nom')?.touched" class="field-error">
-            <span *ngIf="userForm.get('nom')?.errors?.['required']">Ce champ est obligatoire.</span>
-            <span *ngIf="userForm.get('nom')?.errors?.['minlength']">Minimum 2 caractères.</span>
+          <label for="nom">Full Name *</label>
+          <input id="nom" type="text" formControlName="nom" class="form-control">
+          <div *ngIf="userForm.get('nom')?.invalid && userForm.get('nom')?.touched" class="error-message">
+            <span *ngIf="userForm.get('nom')?.errors?.['required']">Name is required</span>
+            <span *ngIf="userForm.get('nom')?.errors?.['minlength']">Name must be at least 2 characters</span>
           </div>
         </div>
-
+        
         <div class="form-group">
-          <label for="email">Adresse e-mail <span class="required">*</span></label>
-          <input id="email" type="email" formControlName="email" class="form-control"
-                 placeholder="ex. ahmed@entreprise.com"
-                 [class.is-invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-          <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="field-error">
-            <span *ngIf="userForm.get('email')?.errors?.['required']">Ce champ est obligatoire.</span>
-            <span *ngIf="userForm.get('email')?.errors?.['email']">Format d'e-mail invalide.</span>
+          <label for="email">Email *</label>
+          <input id="email" type="email" formControlName="email" class="form-control">
+          <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="error-message">
+            <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="userForm.get('email')?.errors?.['email']">Invalid email format</span>
           </div>
         </div>
       </div>
 
-      <!-- Row 2 -->
       <div class="form-row">
         <div class="form-group">
-          <label for="matricule">Matricule <span class="required">*</span></label>
-          <input id="matricule" type="text" formControlName="matricule" class="form-control"
-                 placeholder="ex. EMP001">
+          <label for="matricule">Matricule</label>
+          <input id="matricule" type="text" formControlName="matricule" class="form-control" placeholder="e.g., EMP001">
         </div>
-
+        
         <div class="form-group">
-          <label for="telephone">Téléphone <span class="optional">(optionnel)</span></label>
-          <input id="telephone" type="tel" formControlName="telephone" class="form-control"
-                 placeholder="+216 XX XXX XXX">
+          <label for="telephone">Phone number</label>
+          <input id="telephone" type="tel" formControlName="telephone" class="form-control" placeholder="+216 XX XXX XXX">
         </div>
       </div>
 
-      <!-- Row 3 -->
+      <div class="form-group">
+        <label for="adresse">Address</label>
+        <textarea id="adresse" formControlName="adresse" rows="2" class="form-control" placeholder="Street address"></textarea>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label for="role">Rôle <span class="required">*</span></label>
-          <select id="role" formControlName="role" class="form-control">
-            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-          </select>
+          <label for="ville">City</label>
+          <input id="ville" type="text" formControlName="ville" class="form-control">
         </div>
-
+        
         <div class="form-group">
-          <label for="equipeId">Équipe <span class="optional">(optionnel)</span></label>
+          <label for="equipeId">Team</label>
           <select id="equipeId" formControlName="equipeId" class="form-control">
-            <option value="">— Aucune équipe —</option>
-            <option *ngFor="let equipe of equipes" [value]="equipe.id">{{ equipe.nom }}</option>
+            <option value="">Select a team</option>
+            <option *ngFor="let equipe of equipes" [value]="equipe.id">
+              {{ equipe.nom }}
+            </option>
           </select>
+          
+          <!-- Afficher le nombre d'équipes pour debug -->
+          <div *ngIf="equipes.length === 0" class="debug-info" style="color: orange; font-size: 12px; margin-top: 5px;">
+            ⚠️ No teams loaded. Please check database.
+          </div>
+          <div *ngIf="equipes.length > 0" class="debug-info" style="color: green; font-size: 12px; margin-top: 5px;">
+            ✅ {{ equipes.length }} team(s) loaded
+          </div>
         </div>
       </div>
 
-      <!-- Address -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="adresse">Adresse <span class="optional">(optionnel)</span></label>
-          <textarea id="adresse" formControlName="adresse" rows="2" class="form-control"
-                    placeholder="Rue, numéro..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="ville">Ville <span class="optional">(optionnel)</span></label>
-          <input id="ville" type="text" formControlName="ville" class="form-control"
-                 placeholder="ex. Tunis">
-        </div>
+      <div class="form-group">
+        <label for="role">Role *</label>
+        <select id="role" formControlName="role" class="form-control">
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
       </div>
 
-      <!-- Password (edit only) -->
+      <!-- Password field only shown when editing -->
       <div class="form-group" *ngIf="editingId">
-        <label for="password">Nouveau mot de passe <span class="optional">(laisser vide pour ne pas changer)</span></label>
-        <input id="password" type="password" formControlName="password" class="form-control"
-               placeholder="••••••••">
+        <label for="password">New Password (optional)</label>
+        <input id="password" type="password" formControlName="password" class="form-control" placeholder="Leave blank to keep current password">
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
-          {{ editingId ? 'Enregistrer les modifications' : 'Créer l\'utilisateur' }}
+        <button type="submit" class="btn btn-success" [disabled]="userForm.invalid">
+          {{ editingId ? 'Update User' : 'Create User' }}
         </button>
-        <button type="button" class="btn btn-ghost" (click)="closeForm()">Annuler</button>
+        <button type="button" class="btn btn-warning" (click)="closeForm()">Cancel</button>
       </div>
     </form>
   </div>
 
-  <!-- ── Table ──────────────────────────────────────────────────── -->
-  <div *ngIf="!showForm" class="table-card">
+  <div *ngIf="!showForm" class="users-table-container">
+    <div *ngIf="loading" class="loading">Loading users...</div>
 
-    <div *ngIf="loading" class="state-loading">
-      <div class="spinner"></div>
-      <p>Chargement des utilisateurs…</p>
+    <div *ngIf="!loading && users.length > 0">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Employee ID</th>
+            <th>Phone</th>
+            <th>City</th>
+            <th>Team</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.nom }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.matricule || '-' }}</td>
+            <td>{{ user.telephone || '-' }}</td>
+            <td>{{ user.ville || '-' }}</td>
+            <td>{{ user.equipeNom || '-' }}</td>
+            <td><span class="role-badge">{{ user.role }}</span></td>
+            <td>
+              <button class="btn btn-primary btn-small" (click)="editUser(user)">Edit</button>
+              <button class="btn btn-danger btn-small" (click)="deleteUser(user.id!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <table *ngIf="!loading && users.length > 0" class="users-table">
-      <thead>
-        <tr>
-          <th>Utilisateur</th>
-          <th>Matricule</th>
-          <th>Téléphone</th>
-          <th>Ville</th>
-          <th>Équipe</th>
-          <th>Rôle</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-          <td>
-            <div class="user-cell">
-              <div class="avatar">{{ getInitials(user.nom) }}</div>
-              <div>
-                <div class="user-name">{{ user.nom }}</div>
-                <div class="user-email">{{ user.email }}</div>
-              </div>
-            </div>
-          </td>
-          <td class="muted">{{ user.matricule || '—' }}</td>
-          <td class="muted">{{ user.telephone || '—' }}</td>
-          <td class="muted">{{ user.ville || '—' }}</td>
-          <td class="muted">{{ user.equipeNom || '—' }}</td>
-          <td>
-            <span class="role-badge" [ngClass]="'role-' + user.role">{{ user.role }}</span>
-          </td>
-          <td>
-            <div *ngIf="user.role !== 'ADMIN'" class="row-actions" >
-              <button class="btn btn-sm" (click)="editUser(user)" title="Modifier">
-                ✎ Modifier
-              </button>
-              <button class="btn btn-sm btn-danger" (click)="deleteUser(user.id!)" title="Supprimer">
-                ✕ Supprimer
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div *ngIf="!loading && users.length === 0" class="state-empty">
-      <div class="empty-icon">👥</div>
-      <p>Aucun utilisateur trouvé.</p>
-      <button class="btn btn-primary" (click)="openForm()">Créer le premier utilisateur</button>
+    <div *ngIf="!loading && users.length === 0" class="empty-state">
+      <p>No users found. <a href="#" (click)="openForm()">Create one</a></p>
     </div>
   </div>
-
-  <!-- ── Custom confirm dialog ──────────────────────────────────── -->
-  <div *ngIf="showConfirmDialog" class="dialog-overlay" (click)="onCancelDelete()">
-    <div class="dialog" (click)="$event.stopPropagation()" role="dialog" aria-modal="true"
-         [attr.aria-label]="confirmDialogTitle">
-      <div class="dialog-icon-wrap">
-        <span class="dialog-icon">🗑</span>
-      </div>
-      <h3 class="dialog-title">{{ confirmDialogTitle }}</h3>
-      <p class="dialog-body">{{ confirmDialogMessage }}</p>
-      <div class="dialog-actions">
-        <button class="btn btn-ghost" (click)="onCancelDelete()">Annuler</button>
-        <button class="btn btn-danger-solid" (click)="onConfirmDelete()">Confirmer la suppression</button>
-      </div>
-    </div>
-  </div>
-
 </div>

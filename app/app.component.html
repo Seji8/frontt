@@ -8,102 +8,75 @@
 
     <div class="sidebar-header">
       <div class="logo">
-        <button class="sidebar-toggle" (click)="toggleSidebar()">
-          <i class="fas fa-building"></i>
-        </button>
+        <i class="fas fa-building"></i>
         <span *ngIf="!isSidebarCollapsed">SIGA RemoteFlow</span>
       </div>
     </div>
 
     <nav class="sidebar-nav">
-
-
-      <div class="nav-divider" *ngIf="!isAdmin() && !isSidebarCollapsed">
-      </div>
-      <div class="nav-divider-line" *ngIf="!isAdmin() && isSidebarCollapsed"></div>
-
       <a (click)="navigateTo('/dashboard')"
-         [class.active]="isActive('/dashboard')"
-         class="nav-item" data-tooltip="Dashboard">
+         [class.active]="isActive('/dashboard')" class="nav-item">
         <i class="fas fa-tachometer-alt"></i>
         <span *ngIf="!isSidebarCollapsed">Dashboard</span>
       </a>
 
       <a *ngIf="!isAdmin()" (click)="navigateTo('/mes-demandes')"
-         [class.active]="isActive('/mes-demandes')"
-         class="nav-item" data-tooltip="Mes demandes">
+         [class.active]="isActive('/mes-demandes')" class="nav-item">
         <i class="fas fa-tasks"></i>
         <span *ngIf="!isSidebarCollapsed">Mes demandes</span>
       </a>
-<a *ngIf="!isAdmin()"
-   (click)="navigateTo('/nouvelle-demande')"
-   [class.active]="isActive('/nouvelle-demande')"
-   class="nav-item"
-   data-tooltip="Nouvelle demande">
-
-  <i class="fas fa-plus-circle"></i>
-  <span *ngIf="!isSidebarCollapsed">Nouvelle demande</span>
-</a>
 
       <a *ngIf="isChef() || isRH() || isAdmin()" (click)="navigateTo('/toutes-demandes')"
-         [class.active]="isActive('/toutes-demandes')"
-         class="nav-item" data-tooltip="Toutes les demandes">
+         [class.active]="isActive('/toutes-demandes')" class="nav-item">
         <i class="fas fa-list-alt"></i>
         <span *ngIf="!isSidebarCollapsed">Toutes les demandes</span>
       </a>
 
+      <a *ngIf="!isAdmin()" (click)="navigateTo('/nouvelle-demande')"
+         [class.active]="isActive('/nouvelle-demande')" class="nav-item">
+        <i class="fas fa-plus-circle"></i>
+        <span *ngIf="!isSidebarCollapsed">Nouvelle demande</span>
+      </a>
+
       <a *ngIf="isAdmin()" (click)="navigateTo('/users')"
-         [class.active]="isActive('/users')"
-         class="nav-item" data-tooltip="Utilisateurs">
+         [class.active]="isActive('/users')" class="nav-item">
         <i class="fas fa-users"></i>
         <span *ngIf="!isSidebarCollapsed">Utilisateurs</span>
       </a>
 
       <a *ngIf="isAdmin() || isChef()" (click)="navigateTo('/equipes')"
-         [class.active]="isActive('/equipes')"
-         class="nav-item" data-tooltip="Équipes">
+         [class.active]="isActive('/equipes')" class="nav-item">
         <i class="fas fa-building"></i>
         <span *ngIf="!isSidebarCollapsed">{{ isAdmin() ? 'Équipes' : 'Mon équipe' }}</span>
       </a>
 
-      <a *ngIf="isChef()" (click)="navigateTo('/politique-teletravail')"
-         [class.active]="isActive('/politique-teletravail')"
-         class="nav-item" data-tooltip="Politique Télétravail">
-        <i class="fas fa-sliders-h"></i>
-        <span *ngIf="!isSidebarCollapsed">Politique Télétravail</span>
-      </a>
-
       <a *ngIf="isChef()" (click)="navigateTo('/chef/tasks')"
-         [class.active]="isActive('/chef/tasks')"
-         class="nav-item" data-tooltip="Demandes à valider">
+         [class.active]="isActive('/chef/tasks')" class="nav-item">
         <i class="fas fa-clipboard-list"></i>
         <span *ngIf="!isSidebarCollapsed">Demandes à valider</span>
       </a>
 
       <a *ngIf="isRH()" (click)="navigateTo('/rh/rapport')"
-         [class.active]="isActive('/rh/rapport')"
-         class="nav-item" data-tooltip="Statistiques RH">
+         [class.active]="isActive('/rh/rapport')" class="nav-item">
         <i class="fas fa-chart-bar"></i>
         <span *ngIf="!isSidebarCollapsed">Statistiques RH</span>
       </a>
 
-      <a *ngIf="isRH() || isAdmin()" (click)="navigateTo('rh/audit')"
-         [class.active]="isActive('rh/audit')"
-         class="nav-item" data-tooltip="Audit">
-        <i class="fas fa-shield-alt"></i>
-        <span *ngIf="!isSidebarCollapsed">Audit</span>
-      </a>
-
       <a *ngIf="isAdmin()" (click)="navigateTo('/admin/tasks')"
-         [class.active]="isActive('/admin/tasks')"
-         class="nav-item" data-tooltip="Demandes à valider">
+         [class.active]="isActive('/admin/tasks')" class="nav-item">
         <i class="fas fa-tasks"></i>
         <span *ngIf="!isSidebarCollapsed">Demandes à valider</span>
       </a>
-
     </nav>
 
     <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar"><i class="fas fa-user-circle"></i></div>
+        <div *ngIf="!isSidebarCollapsed" class="user-details">
+          <span class="user-name">{{ userName }}</span>
+          <span class="user-role">{{ userRole }}</span>
+        </div>
+      </div>
       <button class="logout-btn" (click)="logout()">
         <i class="fas fa-sign-out-alt"></i>
         <span *ngIf="!isSidebarCollapsed">Déconnexion</span>
@@ -114,12 +87,12 @@
   <!-- ── Top bar ── -->
   <header class="top-bar" *ngIf="!isLoginPage()"
           [class.collapsed]="isSidebarCollapsed">
-
-    <div class="top-bar-left"></div>
+    <button class="sidebar-toggle" (click)="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
 
     <div class="top-bar-right">
-
-      <!-- Cloche notifications -->
+      <!-- Notification bell -->
       <div class="notification-wrapper">
         <button class="notif-bell" (click)="toggleNotifications($event)"
                 [class.has-notif]="notificationCount > 0"
@@ -130,6 +103,7 @@
           </span>
         </button>
 
+        <!-- Dropdown panel -->
         <div class="notif-panel" *ngIf="showNotifications"
              (click)="$event.stopPropagation()">
 
@@ -147,16 +121,12 @@
 
           <div *ngFor="let n of notifications"
                class="notif-item"
-               [class.unread]="!n.lu"
+                [class.unread]="!n.lu"
                [class.approved]="n.statut === 'APPROVED'"
                [class.rejected]="n.statut === 'REJECTED'"
                (click)="navigateToDemandeFromNotif(n)">
             <div class="notif-icon">
-              <i [class]="getNotificationIcon(n.type, n.statut ?? '')"
-                 [class.icon-approved]="n.statut === 'APPROVED'"
-                 [class.icon-rejected]="n.statut === 'REJECTED'"
-                 [class.icon-new]="n.type === 'NEW_DEMANDE'">
-              </i>
+{{ getNotificationIcon(n.type, n.statut ?? '') }}
             </div>
             <div class="notif-body">
               <p class="notif-msg">{{ n.message }}</p>
@@ -165,31 +135,15 @@
               </span>
             </div>
           </div>
+
         </div>
       </div>
 
-      <!-- Utilisateur top bar -->
-      <div class="topbar-user" (click)="navigateTo('/profil')" *ngIf="!isAdmin()"
-           title="Mon profil">
-        <div class="topbar-avatar">
-          <i class="fas fa-user-circle"></i>
-        </div>
-        <div class="topbar-user-info">
-          <span class="topbar-user-name">{{ userName }}</span>
-          <span class="topbar-user-role">{{ userRole }}</span>
-        </div>
+      <!-- Current user info -->
+      <div class="top-user">
+        <span class="top-user-name">{{ userName }}</span>
+        <span class="top-user-role">{{ userRole }}</span>
       </div>
-
-      <div class="topbar-user no-click" *ngIf="isAdmin()">
-        <div class="topbar-avatar">
-          <i class="fas fa-user-shield"></i>
-        </div>
-        <div class="topbar-user-info">
-          <span class="topbar-user-name">{{ userName }}</span>
-          <span class="topbar-user-role">{{ userRole }}</span>
-        </div>
-      </div>
-
     </div>
   </header>
 

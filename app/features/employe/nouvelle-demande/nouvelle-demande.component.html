@@ -1,236 +1,121 @@
 <div class="nouvelle-demande-container">
-
-  <!-- Header -->
-  <div class="nd-header">
-    <div class="nd-header-icon">
-      <i class="pi pi-building" aria-hidden="true"></i>
-    </div>
-    <div>
-      <h2>Nouvelle demande de télétravail</h2>
-      <p class="nd-subtitle">Remplissez le formulaire ci-dessous pour soumettre votre demande</p>
-    </div>
+  <div class="header">
+    <h2>Nouvelle demande de télétravail</h2>
   </div>
 
-  <!-- Success alert -->
-  <div *ngIf="success" class="nd-alert nd-alert--success">
-    <i class="pi pi-check-circle nd-alert-icon" aria-hidden="true"></i>
-    <span>{{ success }}</span>
+  <div *ngIf="success" class="alert success">
+    ✅ {{ success }}
   </div>
 
-  <!-- Error alert -->
-  <div *ngIf="error" class="nd-alert nd-alert--error">
-    <i class="pi pi-times-circle nd-alert-icon" aria-hidden="true"></i>
-    <span>{{ error }}</span>
+  <div *ngIf="error" class="alert error">
+    ❌ {{ error }}
   </div>
 
-  <!-- Duplicate conflict banner -->
-  <div *ngIf="hasDuplicate && duplicateConflict" class="nd-conflict-banner">
-    <i class="pi pi-exclamation-triangle nd-conflict-icon" aria-hidden="true"></i>
-    <div class="nd-conflict-body">
-      <strong>Demande en conflit détectée</strong>
-      <p>
-        Vous avez déjà une demande de type
-        <span class="nd-conflict-tag">{{ getTypeLabel(duplicateConflict.type) }}</span>
-        <span class="nd-conflict-status" [attr.data-status]="duplicateConflict.statut">
-          {{ getStatusLabel(duplicateConflict.statut) }}
-        </span>
-        qui couvre la période
-        <strong>{{ formatDisplayDate(duplicateConflict.dateDebut) }}</strong>
-        &rarr;
-        <strong>{{ formatDisplayDate(duplicateConflict.dateFin) }}</strong>
-        (demande #{{ duplicateConflict.id }}).
-      </p>
-      <p class="nd-conflict-hint">
-        Modifiez les dates, le type de demande, ou consultez vos demandes existantes.
-      </p>
-    </div>
-  </div>
+  <form [formGroup]="requestForm" (ngSubmit)="onSubmit()" class="demande-form">
 
-  <form [formGroup]="requestForm" (ngSubmit)="onSubmit()" class="nd-form">
-
-    <!-- Type de demande -->
-    <div class="nd-form-group">
-      <label class="nd-label">
-        <i class="pi pi-tag nd-label-icon" aria-hidden="true"></i>
-        Type de demande <span class="required">*</span>
-      </label>
-      <div class="nd-type-selector">
-        <label
-          *ngFor="let t of requestTypes"
-          class="nd-type-option"
-          [class.selected]="requestForm.get('type')?.value === t.value">
-          <input
-            type="radio"
-            formControlName="type"
-            [value]="t.value"
-            style="display:none">
-          <span class="nd-type-icon">
-            <i
-              class="pi"
-              [ngClass]="{
-                'pi-calendar':  t.value === 'OCCASIONAL',
-                'pi-sync':      t.value === 'REGULAR',
-                'pi-briefcase': t.value === 'FULL'
-              }"
-              aria-hidden="true">
-            </i>
-          </span>
-          <span class="nd-type-label">{{ t.label }}</span>
-          <span class="nd-type-desc">
-            <ng-container [ngSwitch]="t.value">
-              <span *ngSwitchCase="'OCCASIONAL'">Journée ponctuelle</span>
-              <span *ngSwitchCase="'REGULAR'">Jour récurrents</span>
-              <span *ngSwitchCase="'FULL'">Temps plein</span>
-            </ng-container>
-          </span>
-        </label>
+    <!-- Motif -->
+    <div class="form-group">
+      <label for="motif">Motif de la demande *</label>
+      <textarea 
+        id="motif" 
+        formControlName="motif" 
+        rows="3"
+        placeholder="Décrivez le motif de votre demande de télétravail..."
+        class="form-control"
+        [class.is-invalid]="requestForm.get('motif')?.invalid && requestForm.get('motif')?.touched">
+      </textarea>
+      <div class="invalid-feedback" *ngIf="requestForm.get('motif')?.invalid && requestForm.get('motif')?.touched">
+        Le motif est requise
       </div>
     </div>
 
+    <!-- Type de demande (above dates so type choice affects date behaviour) -->
+    <div class="form-group">
+      <label for="type">Type de demande *</label>
+      <select id="type" formControlName="type" class="form-control">
+        <option *ngFor="let type of requestTypes" [value]="type.value">
+          {{ type.label }}
+        </option>
+      </select>
+      <small class="form-text">
+        <span *ngIf="requestForm.get('type')?.value === 'OCCASIONAL'">
+          📅 Occasionnelle : Pour une journée ponctuelle
+        </span>
+        <span *ngIf="requestForm.get('type')?.value === 'REGULAR'">
+          🔄 Régulière : Pour plusieurs jours récurrents
+        </span>
+        <span *ngIf="requestForm.get('type')?.value === 'FULL'">
+          💼 Complet : Télétravail à temps plein
+        </span>
+      </small>
+    </div>
+
     <!-- Dates -->
-    <div class="nd-form-row">
-      <div class="nd-form-group">
-        <label class="nd-label" for="dateDebut">
-          <i class="pi pi-calendar nd-label-icon" aria-hidden="true"></i>
-          Date de début <span class="required">*</span>
-        </label>
-        <input
-          type="date"
-          id="dateDebut"
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dateDebut">Date de début</label>
+        <input 
+          type="date" 
+          id="dateDebut" 
           formControlName="dateDebut"
           [min]="minDate"
-          class="nd-input"
+          class="form-control"
           [class.is-invalid]="requestForm.get('dateDebut')?.invalid && requestForm.get('dateDebut')?.touched">
-        <div class="nd-feedback" *ngIf="requestForm.get('dateDebut')?.invalid && requestForm.get('dateDebut')?.touched">
-          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+        <div class="invalid-feedback" *ngIf="requestForm.get('dateDebut')?.invalid && requestForm.get('dateDebut')?.touched">
           Date de début requise
         </div>
       </div>
 
-      <div class="nd-form-group">
-        <label class="nd-label" for="dateFin">
-          <i class="pi pi-calendar nd-label-icon" aria-hidden="true"></i>
-          Date de fin <span class="required">*</span>
-        </label>
-        <input
-          type="date"
-          id="dateFin"
+      <div class="form-group">
+        <label for="dateFin">Date de fin</label>
+        <input 
+          type="date" 
+          id="dateFin" 
           formControlName="dateFin"
           [min]="requestForm.get('dateDebut')?.value || minDate"
-          class="nd-input"
+          class="form-control"
           [class.is-invalid]="(requestForm.get('dateFin')?.invalid && requestForm.get('dateFin')?.touched) || !isDateValid()">
-        <div class="nd-feedback" *ngIf="requestForm.get('dateFin')?.invalid && requestForm.get('dateFin')?.touched">
-          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+        <div class="invalid-feedback" *ngIf="requestForm.get('dateFin')?.invalid && requestForm.get('dateFin')?.touched">
           Date de fin requise
         </div>
-        <div class="nd-feedback" *ngIf="!isDateValid() && requestForm.getRawValue().dateFin">
-          <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+        <div class="invalid-feedback" *ngIf="!isDateValid() && requestForm.getRawValue().dateFin">
           La date de fin doit être postérieure à la date de début
         </div>
-        <div class="nd-hint" *ngIf="isOccasional">
-          <i class="pi pi-info-circle" aria-hidden="true"></i>
-  Date de fin identique à la date de début
-        </div>
-      </div>
-    </div>
-<!--REGULIER OCCURRENCE-->
-<div class="nd-regular-preview" *ngIf="isRegular && requestForm.getRawValue().dateDebut">
-  <div class="nd-preview-header">
-    <i class="pi pi-sync" aria-hidden="true"></i>
-    Récurrence mensuelle
-  </div>
-  <div class="nd-preview-month">{{ getMonthLabel() }}</div>
-  <div class="nd-cal-grid">
-    <span class="nd-cal-day-name" *ngFor="let d of dayNames">{{ d }}</span>
-    <span
-      *ngFor="let day of calendarDays"
-      class="nd-cal-day"
-      [class.nd-cal-day--remote]="day.isRemote"
-      [class.nd-cal-day--selected]="day.isSelected"
-      [class.nd-cal-day--other]="day.otherMonth">
-      {{ day.num }}
-    </span>
-  </div>
-  <div class="nd-preview-summary">
-    <span><i class="pi pi-repeat" aria-hidden="true"></i> Chaque {{ getWeekdayLabel() }}</span>
-    <span class="nd-preview-count">{{ remoteCount }} jours ce mois</span>
-  </div>
-</div>
-    <!-- Motif -->
-    <div class="nd-form-group">
-      <label class="nd-label" for="motif">
-        <i class="pi pi-align-left nd-label-icon" aria-hidden="true"></i>
-        Motif de la demande <span class="required">*</span>
-      </label>
-      <textarea
-        id="motif"
-        formControlName="motif"
-        rows="4"
-        placeholder="Décrivez le motif de votre demande de télétravail..."
-        class="nd-textarea"
-        [class.is-invalid]="requestForm.get('motif')?.invalid && requestForm.get('motif')?.touched">
-      </textarea>
-      <div class="nd-char-count">
-        {{ requestForm.get('motif')?.value?.length || 0 }} / 500
-      </div>
-      <div class="nd-feedback" *ngIf="requestForm.get('motif')?.invalid && requestForm.get('motif')?.touched">
-        <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
-        <span *ngIf="requestForm.get('motif')?.errors?.['required']">Le motif est requis</span>
-        <span *ngIf="requestForm.get('motif')?.errors?.['minlength']">Minimum 5 caractères</span>
+        <small *ngIf="isOccasional" class="form-text">
+          📅 Occasionnelle : date de fin identique à la date de début
+        </small>
       </div>
     </div>
 
     <!-- Fichier justificatif -->
-    <div class="nd-form-group">
-      <label class="nd-label">
-        <i class="pi pi-paperclip nd-label-icon" aria-hidden="true"></i>
-        Fichier justificatif
-        <span class="nd-optional">(optionnel)</span>
-      </label>
-      <div class="nd-file-zone" [class.has-file]="!!fileName">
-        <input
-          type="file"
+    <div class="form-group">
+      <label>Fichier justificatif (optionnel)</label>
+      <div class="file-upload">
+        <input 
+          type="file" 
           #fileInput
-          (change)="onFileSelected($event)"
+          (change)="onFileSelected($event)" 
           accept=".pdf,.doc,.docx,.jpg,.png"
-          style="display:none">
-        <div *ngIf="!fileName" class="nd-file-empty" (click)="fileInput.click()">
-          <div class="nd-file-icon">
-            <i class="pi pi-upload" aria-hidden="true"></i>
-          </div>
-          <p>Cliquez ou glissez un fichier ici</p>
-          <small>PDF, DOC, DOCX, JPG, PNG &mdash; max 5&nbsp;Mo</small>
-        </div>
-        <div *ngIf="fileName" class="nd-file-preview">
-          <i class="pi pi-file nd-file-name-icon" aria-hidden="true"></i>
-          <span class="nd-file-name-text">{{ fileName }}</span>
-          <button
-            type="button"
-            class="nd-file-remove"
-            (click)="removeFile()"
-            title="Supprimer le fichier"
-            aria-label="Supprimer le fichier">
-            <i class="pi pi-times" aria-hidden="true"></i>
-          </button>
-        </div>
+          style="display: none;">
+        <button type="button" class="btn-file" (click)="fileInput.click()">
+          📎 Choisir un fichier
+        </button>
+        <span *ngIf="fileName" class="file-name">
+          📄 {{ fileName }}
+          <button type="button" class="remove-file" (click)="removeFile()">✕</button>
+        </span>
       </div>
+      <small class="form-text">
+        Formats acceptés : PDF, DOC, DOCX, JPG, PNG
+      </small>
     </div>
 
-    <!-- Actions -->
-    <div class="nd-actions">
-      <button type="button" class="nd-btn nd-btn--secondary" (click)="cancel()">
-        <i class="pi pi-times" aria-hidden="true"></i>
-        Annuler
-      </button>
-      <button
-        type="submit"
-        class="nd-btn nd-btn--primary"
-        [disabled]="loading || !isDateValid() || hasDuplicate">
-        <ng-container *ngIf="!loading">
-          <i class="pi pi-send" aria-hidden="true"></i>
-          Envoyer la demande
-        </ng-container>
-        <span *ngIf="loading" class="nd-spinner"></span>
+    <!-- Boutons -->
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="cancel()">Annuler</button>
+      <button type="submit" class="btn-primary" [disabled]="loading || !isDateValid()">
+        <span *ngIf="!loading">📤 Envoyer la demande</span>
+        <span *ngIf="loading" class="spinner"></span>
       </button>
     </div>
 

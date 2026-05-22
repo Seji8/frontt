@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService, User, CreateUserRequest, UpdateUserRequest } from '../../../core/services/user.service';
-import { AuthService } from '../../../core/auth.service';
+import { AuthService } from '../../../core/auth.service';  // ← AJOUTE CET IMPORT
 
 @Component({
   selector: 'app-users',
@@ -21,17 +21,11 @@ export class UsersComponent implements OnInit {
   editingId: number | null = null;
   userForm: FormGroup;
 
-  // Custom confirm dialog state
-  showConfirmDialog = false;
-  confirmDialogMessage = '';
-  confirmDialogTitle = '';
-  pendingDeleteId: number | null = null;
-
   roles = ['ADMIN', 'RH', 'CHEF_EQUIPE', 'EMPLOYE'];
 
   constructor(
     private userService: UserService,
-    private authService: AuthService,
+    private authService: AuthService,  
     private fb: FormBuilder
   ) {
     this.userForm = this.fb.group({
@@ -47,16 +41,17 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Vérifier le rôle avant de charger
     console.log('=== UsersComponent ===');
     console.log('Role:', this.authService.getRole());
     console.log('Is Admin?', this.authService.isAdmin());
-
+    
     if (!this.authService.isAdmin()) {
-      this.error = 'Accès refusé. Droits administrateur requis.';
+      this.error = 'Access denied. Admin rights required.';
       this.loading = false;
       return;
     }
-
+    
     this.loadUsers();
     this.loadEquipes();
   }
@@ -72,9 +67,11 @@ export class UsersComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading users:', err);
-        this.error = err.status === 403
-          ? 'Accès refusé. Droits ADMIN requis.'
-          : 'Impossible de charger les utilisateurs.';
+        if (err.status === 403) {
+          this.error = 'Access denied. You need ADMIN rights.';
+        } else {
+          this.error = 'Failed to load users';
+        }
         this.loading = false;
       }
     });
@@ -88,14 +85,18 @@ export class UsersComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load equipes:', err);
+        if (err.status === 403) {
+          console.error('Access denied for equipes endpoint');
+        }
       }
     });
   }
 
+
   openForm() {
     this.showForm = true;
     this.editingId = null;
-    this.userForm.reset({
+    this.userForm.reset({ 
       role: 'EMPLOYE',
       equipeId: '',
       telephone: '',
@@ -103,6 +104,7 @@ export class UsersComponent implements OnInit {
       ville: '',
       matricule: ''
     });
+    // Supprimer le contrôle password s'il existe
     if (this.userForm.contains('password')) {
       this.userForm.removeControl('password');
     }
@@ -112,6 +114,7 @@ export class UsersComponent implements OnInit {
     this.showForm = false;
     this.editingId = null;
     this.userForm.reset();
+    // Supprimer le contrôle password
     if (this.userForm.contains('password')) {
       this.userForm.removeControl('password');
     }
@@ -119,11 +122,12 @@ export class UsersComponent implements OnInit {
 
   editUser(user: User) {
     this.editingId = user.id || null;
-
+    
+    // Ajouter le contrôle password pour l'édition
     if (!this.userForm.contains('password')) {
       this.userForm.addControl('password', this.fb.control(''));
     }
-
+    
     this.userForm.patchValue({
       nom: user.nom,
       email: user.email,
@@ -134,33 +138,13 @@ export class UsersComponent implements OnInit {
       ville: user.ville || '',
       matricule: user.matricule || ''
     });
-
+    
     this.showForm = true;
-  }
-
-  /**
-   * Converts an empty/blank string to null.
-   * Critical for unique-constrained optional fields (matricule, telephone, etc.)
-   * — the DB treats '' as a real value and rejects duplicates, while NULL is not.
-   */
-  private nullIfEmpty(value: string | null | undefined): string | null {
-    if (value === null || value === undefined) return null;
-    const trimmed = value.trim();
-    return trimmed === '' ? null : trimmed;
-  }
-
-  /**
-   * HTML <select> always returns a string, but equipeId is a number on the backend.
-   * Converts '' → null, and any non-empty string → parsed integer.
-   */
-  private nullOrNumber(value: string | null | undefined): number | null {
-    if (value === null || value === undefined || value === '') return null;
-    const n = parseInt(value, 10);
-    return isNaN(n) ? null : n;
   }
 
   onSubmit() {
     if (this.userForm.invalid) {
+      // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.userForm.controls).forEach(key => {
         this.userForm.get(key)?.markAsTouched();
       });
@@ -175,96 +159,71 @@ export class UsersComponent implements OnInit {
         nom: this.userForm.get('nom')?.value,
         email: this.userForm.get('email')?.value,
         role: this.userForm.get('role')?.value,
-        equipeId: this.nullOrNumber(this.userForm.get('equipeId')?.value),
-        telephone: this.nullIfEmpty(this.userForm.get('telephone')?.value),
-        adresse: this.nullIfEmpty(this.userForm.get('adresse')?.value),
-        ville: this.nullIfEmpty(this.userForm.get('ville')?.value),
-        matricule: this.nullIfEmpty(this.userForm.get('matricule')?.value)
+        equipeId: this.userForm.get('equipeId')?.value,
+        telephone: this.userForm.get('telephone')?.value,
+        adresse: this.userForm.get('adresse')?.value,
+        ville: this.userForm.get('ville')?.value,
+        matricule: this.userForm.get('matricule')?.value
       };
-
-      const passwordValue = this.userForm.get('password')?.value;
-      if (passwordValue) {
-        updateData.password = passwordValue;
+      
+      const passwordControl = this.userForm.get('password');
+      if (passwordControl && passwordControl.value) {
+        updateData.password = passwordControl.value;
       }
 
+      console.log('Updating user with data:', updateData);
+
       this.userService.updateUser(this.editingId, updateData).subscribe({
-        next: () => {
-          this.success = 'Utilisateur mis à jour avec succès.';
+        next: (updatedUser) => {
+          this.success = 'User updated successfully';
           this.closeForm();
           this.loadUsers();
         },
         error: (err) => {
-          this.error = err.error || 'Erreur lors de la mise à jour.';
+          this.error = err.error || 'Failed to update user';
           console.error(err);
         }
       });
-
     } else {
       const createData: CreateUserRequest = {
         nom: this.userForm.get('nom')?.value,
         email: this.userForm.get('email')?.value,
         role: this.userForm.get('role')?.value,
-        equipeId: this.nullOrNumber(this.userForm.get('equipeId')?.value),
-        telephone: this.nullIfEmpty(this.userForm.get('telephone')?.value),
-        adresse: this.nullIfEmpty(this.userForm.get('adresse')?.value),
-        ville: this.nullIfEmpty(this.userForm.get('ville')?.value),
-        matricule: this.nullIfEmpty(this.userForm.get('matricule')?.value)
+        equipeId: this.userForm.get('equipeId')?.value,
+        telephone: this.userForm.get('telephone')?.value,
+        adresse: this.userForm.get('adresse')?.value,
+        ville: this.userForm.get('ville')?.value,
+        matricule: this.userForm.get('matricule')?.value
       };
 
+      console.log('Creating user with data:', createData);
+
       this.userService.createUser(createData).subscribe({
-        next: () => {
-          this.success = 'Utilisateur créé. Les identifiants ont été envoyés par e-mail.';
+        next: (newUser) => {
+          this.success = 'User created successfully. Credentials have been sent to their email.';
           this.closeForm();
           this.loadUsers();
         },
         error: (err) => {
-          this.error = err.error || 'Erreur lors de la création.';
+          this.error = err.error || 'Failed to create user';
           console.error(err);
         }
       });
     }
   }
 
-  // ─── Custom confirm dialog ───────────────────────────────────────────────
-
   deleteUser(id: number) {
-    this.pendingDeleteId = id;
-    this.confirmDialogTitle = 'Supprimer cet utilisateur ?';
-    this.confirmDialogMessage =
-      'Cette action est irréversible. L\'utilisateur perdra immédiatement l\'accès au système.';
-    this.showConfirmDialog = true;
-  }
-
-  onConfirmDelete() {
-    if (this.pendingDeleteId === null) return;
-    this.showConfirmDialog = false;
-
-    this.userService.deleteUser(this.pendingDeleteId).subscribe({
-      next: () => {
-        this.success = 'Utilisateur supprimé avec succès.';
-        this.pendingDeleteId = null;
-        this.loadUsers();
-      },
-      error: (err) => {
-        this.error = 'Impossible de supprimer l\'utilisateur.';
-        this.pendingDeleteId = null;
-        console.error(err);
-      }
-    });
-  }
-
-  onCancelDelete() {
-    this.showConfirmDialog = false;
-    this.pendingDeleteId = null;
-  }
-
-  // ─── Template helpers ────────────────────────────────────────────────────
-
-  getInitials(nom: string): string {
-    return nom
-      .split(' ')
-      .slice(0, 2)
-      .map(n => n[0]?.toUpperCase() ?? '')
-      .join('');
+    if (confirm('Are you sure you want to delete this user?')) {
+      this.userService.deleteUser(id).subscribe({
+        next: () => {
+          this.success = 'User deleted successfully';
+          this.loadUsers();
+        },
+        error: (err) => {
+          this.error = 'Failed to delete user';
+          console.error(err);
+        }
+      });
+    }
   }
 }

@@ -1,13 +1,10 @@
-<!-- toutes-demandes.component.html -->
 <div class="mes-demandes-container">
-
-  <!-- En-tête -->
   <div class="header">
     <h2>Toutes les demandes</h2>
     <span class="count-badge">{{ getFilteredCount() }} / {{ getTotalCount() }}</span>
   </div>
 
-  <!-- Barre de filtres -->
+  <!-- Filtres -->
   <div class="filters-bar">
     <div class="filters-row">
       <div class="filter-group search-group">
@@ -38,45 +35,10 @@
         </select>
       </div>
 
-      <button class="btn-reset" (click)="resetFilters()" title="Réinitialiser les filtres">
+      <button class="btn-reset" (click)="resetFilters()">
         <i class="fas fa-undo-alt"></i>
       </button>
     </div>
-  </div>
-
-  <!-- Barre d'archives -->
-  <div class="archive-bar">
-    <button
-      class="archive-toggle-btn"
-      [class.active]="showArchive"
-      (click)="toggleArchive()"
-      title="{{ showArchive ? 'Revenir au mois courant' : 'Voir les archives' }}">
-      <i class="fas fa-archive"></i>
-      <span>Archives</span>
-    </button>
-
-    <ng-container *ngIf="showArchive">
-      <span class="archive-label">Mois :</span>
-      <select
-        class="archive-select"
-        [(ngModel)]="selectedArchiveMonth"
-        (change)="onArchiveMonthChange()">
-        <option *ngFor="let m of availableMonths" [value]="m.value">{{ m.label }}</option>
-      </select>
-      <span class="archive-badge">
-        <i class="fas fa-clock"></i>
-        {{ getSelectedMonthLabel() }}
-      </span>
-    </ng-container>
-  </div>
-
-  <!-- Label de section dynamique -->
-  <div class="section-label" *ngIf="!loading && !error">
-    <span>
-      {{ showArchive
-          ? '🗂 ' + getSelectedMonthLabel() + ' — archives'
-          : '📅 ' + getCurrentMonthLabel() + ' — mois en cours' }}
-    </span>
   </div>
 
   <!-- Loading -->
@@ -85,40 +47,28 @@
   <!-- Erreur -->
   <div *ngIf="error" class="error">{{ error }}</div>
 
-  <!-- Liste vide -->
+  <!-- Vide -->
   <div *ngIf="!loading && !error && filteredDemandes.length === 0" class="empty">
     <div class="empty-icon">📋</div>
     <h3>Aucune demande trouvée</h3>
-    <p *ngIf="demandes.length > 0 || showArchive">
-      <ng-container *ngIf="showArchive && demandes.length === 0">
-        Aucune demande pour {{ getSelectedMonthLabel() }}.
-      </ng-container>
-      <ng-container *ngIf="demandes.length > 0">
-        Essayez de réinitialiser les filtres.
-      </ng-container>
-    </p>
+    <p *ngIf="demandes.length > 0">Essayez de réinitialiser les filtres.</p>
     <button class="btn-reset" *ngIf="demandes.length > 0" (click)="resetFilters()">
       Réinitialiser les filtres
     </button>
   </div>
 
-  <!-- Liste des demandes -->
+  <!-- Liste -->
   <div *ngIf="!loading && !error && filteredDemandes.length > 0" class="demandes-list">
     <div class="demande-card" *ngFor="let demande of filteredDemandes">
-
       <div class="demande-header">
         <div class="demande-id">#{{ demande.id }}</div>
         <div class="demande-date">{{ formatDate(demande.dateCreation) }}</div>
       </div>
 
       <div class="demande-body">
+        <!-- ✅ Nom de l'employé visible pour admin -->
         <div class="demande-employe">
-          <td class="user-cell">
-            <div class="user-avatar">
-              {{ (demande.utilisateurNom || 'U').charAt(0) }}
-            </div>
-            <div class="user-info"></div>
-          </td>
+          <i class="fas fa-user"></i>
           <strong>{{ demande.utilisateurNom || 'Employé inconnu' }}</strong>
         </div>
         <div class="demande-motif">
@@ -138,8 +88,6 @@
         </div>
         <button class="btn-detail" (click)="voirDetail(demande)">Voir le détail</button>
       </div>
-
     </div>
   </div>
-
 </div>
