@@ -1,0 +1,87 @@
+<!-- login.component.html -->
+<div class="login-container">
+  <div class="login-wrapper">
+    <!-- Left side - Image section -->
+    <div class="login-image">
+      <div class="image-overlay"></div>
+      <img src="https://images.pexels.com/photos/4050315/pexels-photo-4050315.jpeg?auto=compress&cs=tinysrgb&w=600" 
+           alt="Télétravail" 
+           class="work-photo">
+     
+          <div class="image-content">
+        
+        <h3>RemoteFlow</h3>
+        <p>Gérez vos demandes de télétravail efficacement avec SIGA RemoteFlow</p>
+         <!--<div class="features">
+          <span>✓ Demandes rapides</span>
+          <span>✓ Suivi en temps réel</span>
+          <span>✓ Validation automatique</span>
+        </div>-->
+      </div>
+    </div>
+
+    <!-- Right side - Login form -->
+    <div class="login-form">
+      <div class="form-header">
+        <div class="logo-icon">
+          <img src="assets/images/siga-logo.png" alt="SIGA" class="siga-logo">
+        </div>
+        <h2>Bienvenue chez SIGA</h2>
+        <p>Connectez-vous à votre espace télétravail</p>
+      </div>
+
+      <div *ngIf="error" class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i> {{ error }}
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label for="email">Email professionnel</label>
+    <div class="input-icon">
+      <span class="icon"><i class="pi pi-envelope"></i></span>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="nom@entreprise.com"
+        [class.is-invalid]="email?.invalid && email?.touched"
+      >
+    </div>
+    <div *ngIf="email?.invalid && email?.touched" class="error-message">
+      <span *ngIf="email?.errors?.['required']">L'email est requis</span>
+      <span *ngIf="email?.errors?.['email']">Email invalide</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="password">Mot de passe</label>
+    <div class="input-icon">
+      <span class="icon"><i class="pi pi-lock"></i></span>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="Votre mot de passe"
+        [class.is-invalid]="password?.invalid && password?.touched"
+      >
+    </div>
+    <div *ngIf="password?.invalid && password?.touched" class="error-message">
+      <span *ngIf="password?.errors?.['required']">Mot de passe requis</span>
+      <span *ngIf="password?.errors?.['minlength']">Minimum 6 caractères</span>
+    </div>
+  </div>
+
+  <button
+    type="submit"
+    class="btn-login"
+    [disabled]="loading || loginForm.invalid"
+  >
+    <span *ngIf="!loading">Se connecter</span>
+    <span *ngIf="loading">Connexion en cours...</span>
+  </button>
+</form>
+
+   
+    </div>
+  </div>
+</div>

@@ -1,0 +1,156 @@
+.rh-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 4px 0;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+.btn-pdf {
+  background: #1a1a2e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-pdf:hover { background: #16213e; }
+.btn-pdf:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.filters-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-group { display: flex; flex-direction: column; gap: 4px; }
+.filter-group label { font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; }
+
+.filter-select {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  background: white;
+  color: #1a1a2e;
+}
+
+.period-label {
+  margin-left: auto;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-icon { font-size: 24px; margin-bottom: 8px; }
+.stat-value { font-size: 36px; font-weight: 700; color: #1a1a2e; }
+.stat-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+.stat-card.approved .stat-value { color: #059669; }
+.stat-card.rejected .stat-value { color: #dc2626; }
+.stat-card.pending .stat-value { color: #d97706; }
+
+.taux-section, .equipe-section, .table-section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+h2 { font-size: 16px; font-weight: 600; color: #1a1a2e; margin: 0 0 16px 0; }
+
+.taux-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.taux-card { border-radius: 10px; padding: 24px; text-align: center; }
+.taux-card.teletravail { background: #ecfdf5; border: 1px solid #a7f3d0; }
+.taux-card.sursite { background: #eff6ff; border: 1px solid #bfdbfe; }
+
+.taux-pct { font-size: 48px; font-weight: 700; }
+.taux-card.teletravail .taux-pct { color: #059669; }
+.taux-card.sursite .taux-pct { color: #2563eb; }
+
+.taux-label { font-size: 14px; color: #64748b; margin: 4px 0 12px; }
+.taux-bar { background: #f1f5f9; border-radius: 999px; height: 8px; overflow: hidden; }
+.taux-fill { height: 100%; border-radius: 999px; transition: width 0.5s; }
+.taux-fill.green { background: linear-gradient(90deg, #059669, #34d399); }
+.taux-fill.blue { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+
+.equipe-list { display: flex; flex-direction: column; gap: 12px; }
+
+.equipe-row {
+  display: grid;
+  grid-template-columns: 1fr auto 2fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.equipe-name { font-size: 14px; font-weight: 500; color: #1a1a2e; }
+.equipe-stats { font-size: 13px; color: #64748b; white-space: nowrap; }
+.equipe-bar-track { background: #f1f5f9; border-radius: 999px; height: 8px; overflow: hidden; }
+.equipe-bar-fill { height: 100%; background: linear-gradient(90deg, #059669, #34d399); border-radius: 999px; transition: width 0.5s; }
+.equipe-taux { font-size: 13px; font-weight: 600; color: #059669; white-space: nowrap; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: #f8fafc; padding: 10px 14px; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e2e8f0; }
+td { padding: 10px 14px; border-bottom: 1px solid #f1f5f9; color: #4b5563; }
+tr:last-child td { border-bottom: none; }
+
+.status-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.status-approved { background: #ecfdf5; color: #059669; }
+.status-rejected { background: #fef2f2; color: #dc2626; }
+.status-pending { background: #fffbeb; color: #d97706; }
+.status-cancelled { background: #f1f5f9; color: #64748b; }
+
+.loading { text-align: center; padding: 40px; color: #64748b; }
+.error { background: #fef2f2; color: #dc2626; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+.empty { text-align: center; padding: 40px; color: #94a3b8; }
+
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .taux-grid { grid-template-columns: 1fr; }
+  .equipe-row { grid-template-columns: 1fr auto; }
+  .equipe-bar-track { display: none; }
+}.stat-card.cancelled .stat-value { color: #64748b; }
